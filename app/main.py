@@ -45,7 +45,7 @@ class JournalEntry(BaseModel):
     content: str
     timestamp: str  # or datetime if you want automatic time parsing
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
@@ -57,12 +57,13 @@ async def save_journal_entry(entry: JournalEntry):
 
 
 from fastapi.responses import HTMLResponse
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
+
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 
 app = FastAPI()
 
