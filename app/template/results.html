@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - CuraData{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="results-header">
+        <h1><i class="fas fa-file-medical"></i> Analysis Results</h1>
+        <button class="new-analysis-btn" onclick="window.location.href='/'">
+            <i class="fas fa-plus"></i> New Analysis
+        </button>
+    </div>
+    
+    <div class="results-content">
+        <div class="document-preview">
+            <h3><i class="fas fa-file-pdf"></i> Original Document</h3>
+            <div class="preview-container" id="documentPreview">
+                <p>Document preview will appear here</p>
+            </div>
+        </div>
+        
+        <div class="analysis-results">
+            <h3><i class="fas fa-lightbulb"></i> Plain Language Summary</h3>
+            <div class="summary-container" id="analysisContent">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Analyzing your document...</p>
+                </div>
+            </div>
+            
+            <div class="key-findings" id="keyFindings" style="display: none;">
+                <h4><i class="fas fa-exclamation-triangle"></i> Key Findings</h4>
+                <div class="findings-list" id="findingsList">
+                    <!-- Key findings will be populated here -->
+                </div>
+            </div>
+            
+            <div class="recommendations" id="recommendations" style="display: none;">
+                <h4><i class="fas fa-user-md"></i> What This Means</h4>
+                <div class="recommendations-content" id="recommendationsContent">
+                    <!-- Recommendations will be populated here -->
+                </div>
+            </div>
+            
+            <div class="disclaimer">
+                <div class="disclaimer-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Important Disclaimer:</strong>
+                        <p>This analysis is for informational purposes only and should not replace professional medical advice. Always consult with your healthcare provider for medical decisions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="action-buttons">
+        <button class="share-btn">
+            <i class="fas fa-share"></i> Share Results
+        </button>
+        <button class="download-btn">
+            <i class="fas fa-download"></i> Download Report
+        </button>
+        <button class="email-btn">
+            <i class="fas fa-envelope"></i> Email to Doctor
+        </button>
+    </div>
+</div>
+{% endblock %}
