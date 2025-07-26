@@ -200,13 +200,6 @@ class JournalEntry(BaseModel):
     symptoms: list[str]
     notes: str
 
-journal_entries = []
-
-@app.post("/api/journal/entry")
-async def save_journal_entry(entry: JournalEntry):
-    journal_entries.append(entry)
-    return {"status": "success", "message": "Entry saved"}
-
 # Journal/storage functionality (if needed)
 journal_entries = []
 
