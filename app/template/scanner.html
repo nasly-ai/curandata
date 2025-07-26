@@ -2,12 +2,56 @@
 <html>
 <head>
     <title>CuraData Scanner</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 40px; 
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .upload-area {
+            border: 3px dashed rgba(255,255,255,0.5);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Document Scanner</h1>
-    <p>Upload your medical documents here</p>
-    <input type="file" id="fileInput" accept=".pdf,.jpg,.png">
-    <button onclick="handleUpload()">Analyze Document</button>
+    <div class="container">
+        <h1>📄 Document Scanner</h1>
+        <p>Upload your medical reports for AI analysis</p>
+        
+        <div class="upload-area">
+            <input type="file" id="fileInput" accept=".pdf,.jpg,.png">
+            <br><br>
+            <button onclick="handleUpload()">Analyze Document</button>
+        </div>
+        
+        <p><a href="/journal" style="color: white;">← Back to Health Journal</a></p>
+    </div>
     
     <script>
         function handleUpload() {
@@ -16,7 +60,7 @@
                 alert('Please select a file first!');
                 return;
             }
-            alert('File selected: ' + fileInput.files[0].name + '\nUpload functionality coming soon!');
+            alert('File selected: ' + fileInput.files[0].name + '\n\nUpload functionality will be connected to your API soon!');
         }
     </script>
 </body>
