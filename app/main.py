@@ -198,14 +198,14 @@ async def api_info():
 # Journal/storage functionality (if needed)
 journal_entries = []
 
-class JournalEntry:
-    def __init__(self, title: str, content: str):
-        self.title = title
-        self.content = content
+from pydantic import BaseModel
+
+class JournalEntry(BaseModel):
+    title: str
+    content: str
 
 @app.post("/save_journal_entry")
 async def save_journal_entry(entry: JournalEntry):
-    # You can access the data with entry.title, entry.content, etc.
     journal_entries.append({"title": entry.title, "content": entry.content})
     return {"message": "Entry saved!", "entry": entry.dict()}
 
