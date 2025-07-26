@@ -242,15 +242,23 @@ async def upload_file(file: UploadFile = File(...)):
     return {"filename": file.filename, "text": text}
 
 # ==== Other Routes (like /journal) ====
+from pydantic import BaseModel
+from fastapi import APIRouter
+
+class JournalEntry(BaseModel):
+    id: int
+    title: str
+    
 @app.get("/journal", response_class=HTMLResponse)
 async def journal_page():
     return """<!DOCTYPE html> ... your journal HTML ..."""
 
 from pydantic import BaseModel
+from fastapi import APIRouter
 
 class JournalEntry(BaseModel):
+    id: int
     title: str
-    content: str
     timestamp: str  # or datetime if you want automatic time parsing
 
 
@@ -277,6 +285,14 @@ bloodwork_submissions = []
 # (Keep your existing @app.get("/") and @app.post("/upload/") routes)
 
 # ===== ADD THIS NEW JOURNAL ROUTE =====
+
+from pydantic import BaseModel
+from fastapi import APIRouter
+
+class JournalEntry(BaseModel):
+    id: int
+    title: str
+    
 @app.get("/journal", response_class=HTMLResponse)
 async def journal_page():
     """Health Journal Calendar Page"""
@@ -590,7 +606,13 @@ async def journal_page():
     </body>
     </html>
     """
+from pydantic import BaseModel
+from fastapi import APIRouter
 
+class JournalEntry(BaseModel):
+    id: int
+    title: str
+    
 # Add the API endpoint after the journal route
 @app.post("/api/journal/entry")
 async def save_journal_entry(entry: JournalEntry):
