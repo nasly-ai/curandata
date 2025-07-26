@@ -166,3 +166,221 @@ async function analyzeDocument() {
         uploadProgress.style.display = 'none';
         analyzeBtn.disabled = false;
     }
+}
+
+function updateProgress(percentage, text) {
+    progressFill.style.width = percentage + '%';
+    progressText.textContent = text;
+}
+
+async function simulateAnalysis(result) {
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return result;
+}
+
+async function generateMockAnalysis(extractedText) {
+    // This would normally call your AI analysis API
+    // For now, return a mock analysis
+    return {
+        summary: "This appears to be a medical report. The document contains test results and medical observations that should be reviewed with your healthcare provider.",
+        keyFindings: [
+            "Test results are within normal ranges",
+            "No immediate concerns identified",
+            "Follow-up recommended in 6 months"
+        ],
+        recommendations: [
+            "Discuss these results with your doctor",
+            "Maintain current medication regimen",
+            "Schedule follow-up appointment"
+        ]
+    };
+}
+
+// Results page functionality
+function initializeResults() {
+    const analysisData = localStorage.getItem('analysisResult');
+    
+    if (!analysisData) {
+        // No analysis data, redirect to home
+        window.location.href = '/';
+        return;
+    }
+
+    const data = JSON.parse(analysisData);
+    displayResults(data);
+}
+
+function displayResults(data) {
+    // Update document preview
+    const documentPreview = document.getElementById('documentPreview');
+    if (documentPreview) {
+        documentPreview.innerHTML = `
+            <div class="document-info">
+                <h4><i class="fas fa-file"></i> ${data.filename}</h4>
+                <p><strong>Analyzed:</strong> ${formatTimestamp(data.timestamp)}</p>
+                <div class="extracted-text">
+                    <h5>Extracted Text Preview:</h5>
+                    <p>${data.text.substring(0, 200)}...</p>
+                </div>
+            </div>
+        `;
+    }
+
+    // Hide loading spinner and show analysis
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const analysisContent = document.getElementById('analysisContent');
+    
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+    
+    if (analysisContent && data.analysis) {
+        analysisContent.innerHTML = `
+            <div class="analysis-summary">
+                <p>${data.analysis.summary}</p>
+            </div>
+        `;
+        
+        // Show key findings
+        const keyFindings = document.getElementById('keyFindings');
+        const findingsList = document.getElementById('findingsList');
+        
+        if (keyFindings && findingsList && data.analysis.keyFindings) {
+            keyFindings.style.display = 'block';
+            findingsList.innerHTML = data.analysis.keyFindings
+                .map(finding => `<div class="finding-item"><i class="fas fa-check-circle"></i> ${finding}</div>`)
+                .join('');
+        }
+        
+        // Show recommendations
+        const recommendations = document.getElementById('recommendations');
+        const recommendationsContent = document.getElementById('recommendationsContent');
+        
+        if (recommendations && recommendationsContent && data.analysis.recommendations) {
+            recommendations.style.display = 'block';
+            recommendationsContent.innerHTML = data.analysis.recommendations
+                .map(rec => `<div class="recommendation-item"><i class="fas fa-lightbulb"></i> ${rec}</div>`)
+                .join('');
+        }
+    }
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Action button handlers
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('share-btn')) {
+        shareResults();
+    } else if (event.target.classList.contains('download-btn')) {
+        downloadReport();
+    } else if (event.target.classList.contains('email-btn')) {
+        emailToDoctor();
+    }
+});
+
+function shareResults() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'CuraData Analysis Results',
+            text: 'Check out my medical report analysis from CuraData',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Results link copied to clipboard!');
+        });
+    }
+}
+
+function downloadReport() {
+    const analysisData = localStorage.getItem('analysisResult');
+    if (!analysisData) return;
+    
+    const data = JSON.parse(analysisData);
+    const reportContent = generateReportContent(data);
+    
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `curadata-analysis-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function emailToDoctor() {
+    const analysisData = localStorage.getItem('analysisResult');
+    if (!analysisData) return;
+    
+    const data = JSON.parse(analysisData);
+    const subject = encodeURIComponent('Medical Report Analysis - CuraData');
+    const body = encodeURIComponent(generateEmailContent(data));
+    
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function generateReportContent(data) {
+    return `
+CuraData Analysis Report
+========================
+
+Document: ${data.filename}
+Analyzed: ${formatTimestamp(data.timestamp)}
+
+SUMMARY:
+${data.analysis.summary}
+
+KEY FINDINGS:
+${data.analysis.keyFindings.map((finding, index) => `${index + 1}. ${finding}`).join('\n')}
+
+RECOMMENDATIONS:
+${data.analysis.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
+
+DISCLAIMER:
+This analysis is for informational purposes only and should not replace professional medical advice. Always consult with your healthcare provider for medical decisions.
+
+Generated by CuraData - https://curadata.onrender.com
+    `.trim();
+}
+
+function generateEmailContent(data) {
+    return `
+Hello Doctor,
+
+I've had my medical report analyzed using CuraData. Here's a summary:
+
+Document: ${data.filename}
+Analysis Date: ${formatTimestamp(data.timestamp)}
+
+Summary: ${data.analysis.summary}
+
+I'd like to discuss these results during our next appointment.
+
+Best regards
+    `.trim();
+}
+
+// Add smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
