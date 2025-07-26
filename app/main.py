@@ -191,16 +191,21 @@ async def api_info():
     }
 
 from pydantic import BaseModel
+from fastapi import APIRouter
 
 class JournalEntry(BaseModel):
     date: str
-    content: str
+    mood: str
+    supplements: list[str]
+    symptoms: list[str]
+    notes: str
 
-@app.post("/journal", response_model=JournalEntry)
+journal_entries = []
+
+@app.post("/api/journal/entry")
 async def save_journal_entry(entry: JournalEntry):
     journal_entries.append(entry)
-    return entry
-
+    return {"status": "success", "message": "Entry saved"}
 
 # Journal/storage functionality (if needed)
 journal_entries = []
