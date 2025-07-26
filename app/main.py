@@ -1142,3 +1142,7 @@ def generate_health_response(question):
         
         For personalized medical advice, always consult with qualified healthcare professionals.
         """
+        
+@app.get("/test-scanner")
+async def test_scanner():
+    return {"message": "Scanner route works!", "status": "success"}
