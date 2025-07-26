@@ -11,10 +11,6 @@ import os
 @app.get("/scanner")               # Camera scanner page
 @app.get("/analysis")              # AI analysis results page
 
-
-# ==== Initialize FastAPI app ====
-app = FastAPI()
-
 # ==== Route: Upload PDF and Extract Text ====
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
