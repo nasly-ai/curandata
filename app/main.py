@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
 
+app = FastAPI()
+
 # Add new routes:
 @app.post("/api/upload-advanced")  # Enhanced upload with OCR
 @app.post("/api/health-analysis")  # AI analysis
@@ -21,9 +23,9 @@ async def upload_file(file: UploadFile = File(...)):
 
     # Extract text from PDF using PyMuPDF
     text = ""
-    doc = fitz.open(temp_file.name)
+    doc = PdfReader(temp_file.name)
     for page in doc:
-        text += page.get_text()
+        text += page.extract_text()
 
     os.remove(temp_file.name)
 
