@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-container">
+        <h1>Understand Your Medical Reports</h1>
+        <p class="hero-subtitle">Upload your medical documents and get clear, easy-to-understand explanations powered by AI</p>
+        
+        <div class="upload-section">
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop your medical report here</h3>
+                    <p>or click to browse files</p>
+                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden>
+                    <div class="file-types">
+                        <span>Supported: PDF, JPG, PNG</span>
+                    </div>
+                </div>
+                
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">Uploading...</p>
+                </div>
+                
+                <button class="analyze-btn" id="analyzeBtn" disabled>
+                    <i class="fas fa-microscope"></i>
+                    Analyze Document
+                </button>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Secure & Private</h4>
+                    <p>Your documents are processed securely and not stored</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-brain"></i>
+                    <h4>AI-Powered</h4>
+                    <p>Advanced AI translates medical jargon into plain language</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-clock"></i>
+                    <h4>Instant Results</h4>
+                    <p>Get your analysis in seconds, not hours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="how-it-works">
+    <div class="container">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Upload</h3>
+                <p>Upload your medical report (PDF or image)</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Analyze</h3>
+                <p>Our AI reads and interprets your document</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Understand</h3>
+                <p>Get clear explanations in simple terms</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
