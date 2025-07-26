@@ -194,11 +194,9 @@ from pydantic import BaseModel
 from fastapi import APIRouter
 
 class JournalEntry(BaseModel):
-    date: str
-    mood: str
-    supplements: list[str]
-    symptoms: list[str]
-    notes: str
+    id: int
+    title: str
+    content: str
 
 # Journal/storage functionality (if needed)
 journal_entries = []
