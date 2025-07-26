@@ -190,6 +190,18 @@ async def api_info():
         }
     }
 
+from pydantic import BaseModel
+
+class JournalEntry(BaseModel):
+    date: str
+    content: str
+
+@app.post("/journal", response_model=JournalEntry)
+async def save_journal_entry(entry: JournalEntry):
+    journal_entries.append(entry)
+    return entry
+
+
 # Journal/storage functionality (if needed)
 journal_entries = []
 
