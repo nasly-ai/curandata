@@ -6,7 +6,18 @@
 <body>
     <h1>Document Scanner</h1>
     <p>Upload your medical documents here</p>
-    <input type="file" accept=".pdf,.jpg,.png">
-    <button>Analyze Document</button>
+    <input type="file" id="fileInput" accept=".pdf,.jpg,.png">
+    <button onclick="handleUpload()">Analyze Document</button>
+    
+    <script>
+        function handleUpload() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) {
+                alert('Please select a file first!');
+                return;
+            }
+            alert('File selected: ' + fileInput.files[0].name + '\nUpload functionality coming soon!');
+        }
+    </script>
 </body>
 </html>
