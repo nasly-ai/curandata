@@ -1,15 +1,16 @@
+from fastapi import FastAPI, File, UploadFile, Request
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+import os
+
 # Add new routes:
 @app.post("/api/upload-advanced")  # Enhanced upload with OCR
 @app.post("/api/health-analysis")  # AI analysis
 @app.get("/scanner")               # Camera scanner page
 @app.get("/analysis")              # AI analysis results page
 
-# ==== Required Imports ====
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import HTMLResponse
-from pypdf import PdfReader
-import os
-import tempfile
 
 # ==== Initialize FastAPI app ====
 app = FastAPI()
@@ -37,7 +38,6 @@ async def upload_file(file: UploadFile = File(...)):
 async def journal_page():
     return """<!DOCTYPE html> ... your journal HTML ..."""
 
-
 from pydantic import BaseModel
 
 class JournalEntry(BaseModel):
@@ -45,27 +45,11 @@ class JournalEntry(BaseModel):
     content: str
     timestamp: str  # or datetime if you want automatic time parsing
 
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import HTMLResponse
-
-app = FastAPI()
 
 @app.post("/save_journal_entry")
 async def save_journal_entry(entry: JournalEntry):
     # You can access the data with entry.title, entry.content, etc.
     return {"message": "Entry saved!", "entry": entry.dict()}
-
-
-from fastapi.responses import HTMLResponse
-from fastapi import FastAPI, File, UploadFile
-
-from fastapi.responses import HTMLResponse
-
-app = FastAPI()
-
-from fastapi import FastAPI, File, UploadFile
-
-app = FastAPI()
 
 @app.get("/test")
 def test():
