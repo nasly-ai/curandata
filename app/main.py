@@ -7,7 +7,7 @@
 # ==== Required Imports ====
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
-import fitz  # PyMuPDF
+from pypdf import PdfReader
 import os
 import tempfile
 
