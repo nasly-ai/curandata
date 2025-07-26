@@ -1,6 +1,6 @@
 fastapi==0.104.1
 python-multipart==0.0.6
 uvicorn==0.24.0
-PyMuPDF==1.23.8
+pypdf==3.17.4
 firebase-admin==6.2.0
 google-cloud-vision==3.4.5
