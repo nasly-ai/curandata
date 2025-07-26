@@ -1,13 +1,16 @@
-from fastapi import FastAPI, File, UploadFile, Request
+from fastapi import FastAPI, File, UploadFile, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
+import tempfile
+from pypdf import PdfReader
+import io
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(title="CuraData", description="Medical Document Analyzer")
 
 # Add template and static file support
 templates = Jinja2Templates(directory="app/templates")
@@ -31,6 +34,183 @@ async def homepage(request: Request):
 @app.get("/results", response_class=HTMLResponse)
 async def results_page(request: Request):
     return templates.TemplateResponse("results.html", {"request": request})
+
+# Scanner page
+@app.get("/scanner", response_class=HTMLResponse)
+async def scanner_page(request: Request):
+    return templates.TemplateResponse("scanner.html", {"request": request})
+
+# Analysis page
+@app.get("/analysis", response_class=HTMLResponse)
+async def analysis_page(request: Request):
+    return templates.TemplateResponse("analysis.html", {"request": request})
+
+# API Routes
+
+@app.post("/api/upload-advanced")
+async def upload_advanced(file: UploadFile = File(...)):
+    """Enhanced upload with OCR and text extraction"""
+    try:
+        # Validate file type
+        allowed_types = ["application/pdf", "image/jpeg", "image/jpg", "image/png"]
+        if file.content_type not in allowed_types:
+            raise HTTPException(status_code=400, detail="Unsupported file type")
+        
+        # Read file content
+        file_content = await file.read()
+        
+        # Extract text based on file type
+        extracted_text = ""
+        
+        if file.content_type == "application/pdf":
+            # Extract text from PDF using pypdf
+            try:
+                pdf_file = io.BytesIO(file_content)
+                pdf_reader = PdfReader(pdf_file)
+                
+                for page in pdf_reader.pages:
+                    extracted_text += page.extract_text() + "\n"
+                    
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"PDF processing error: {str(e)}")
+                
+        elif file.content_type.startswith("image/"):
+            # For images, you would typically use OCR here
+            # This is a placeholder - you'd implement Google Vision API or similar
+            extracted_text = "Image OCR processing would happen here. Please implement Google Vision API integration."
+        
+        # Return extracted text
+        return {
+            "success": True,
+            "filename": file.filename,
+            "content_type": file.content_type,
+            "size": len(file_content),
+            "text": extracted_text.strip(),
+            "message": "Document processed successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Processing error: {str(e)}")
+
+@app.post("/api/health-analysis")
+async def health_analysis(data: dict):
+    """AI analysis of medical text"""
+    try:
+        text = data.get("text", "")
+        if not text:
+            raise HTTPException(status_code=400, detail="No text provided for analysis")
+        
+        # This is where you'd integrate with your AI service
+        # For now, return a mock analysis
+        analysis = {
+            "summary": "This appears to be a medical document. The text has been processed and analyzed for key medical information.",
+            "key_findings": [
+                "Medical terminology detected",
+                "Test results or clinical observations present",
+                "Professional medical language identified"
+            ],
+            "recommendations": [
+                "Please consult with your healthcare provider to discuss these results",
+                "Keep this analysis for your medical records",
+                "Schedule a follow-up appointment if recommended"
+            ],
+            "confidence": 0.85,
+            "processed_at": "2025-07-26T00:00:00Z"
+        }
+        
+        return {
+            "success": True,
+            "analysis": analysis,
+            "original_text_length": len(text)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis error: {str(e)}")
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """Basic file upload and text extraction"""
+    try:
+        # Save the uploaded file temporarily
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file.write(await file.read())
+        temp_file.close()
+
+        # Extract text from PDF using pypdf
+        text = ""
+        try:
+            with open(temp_file.name, 'rb') as pdf_file:
+                pdf_reader = PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    text += page.extract_text()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"PDF processing error: {str(e)}")
+        finally:
+            # Clean up temp file
+            os.remove(temp_file.name)
+
+        return {"filename": file.filename, "text": text}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Upload error: {str(e)}")
+
+# Test routes
+@app.get("/test")
+def test():
+    return {"message": "working"}
+
+@app.get("/test_route")
+async def test_route():
+    return {"message": "Test route works!", "status": "success"}
+
+# Health check
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "service": "CuraData API",
+        "version": "1.0.0"
+    }
+
+# API documentation
+@app.get("/api/info")
+async def api_info():
+    return {
+        "name": "CuraData API",
+        "description": "Medical Document Analysis API",
+        "version": "1.0.0",
+        "endpoints": {
+            "POST /api/upload-advanced": "Upload and process medical documents",
+            "POST /api/health-analysis": "Analyze medical text with AI",
+            "POST /upload": "Basic file upload",
+            "GET /": "Homepage",
+            "GET /results": "Analysis results page",
+            "GET /health": "Health check"
+        }
+    }
+
+# Journal/storage functionality (if needed)
+journal_entries = []
+
+class JournalEntry:
+    def __init__(self, title: str, content: str):
+        self.title = title
+        self.content = content
+
+@app.post("/save_journal_entry")
+async def save_journal_entry(entry: JournalEntry):
+    # You can access the data with entry.title, entry.content, etc.
+    journal_entries.append({"title": entry.title, "content": entry.content})
+    return {"message": "Entry saved!", "entry": entry.dict()}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=10000)
 
 app = FastAPI()
 
