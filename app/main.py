@@ -1025,3 +1025,15 @@ def generate_health_response(question):
 @app.get("/test-scanner")
 async def test_scanner():
     return {"message": "Scanner route works!", "status": "success"}
+
+@app.get("/simple-test", response_class=HTMLResponse)
+async def simple_test():
+    return """
+    <html>
+        <head><title>Simple Test</title></head>
+        <body>
+            <h1>✅ Simple HTML Test Works!</h1>
+            <p>If you see this, your routes are working fine.</p>
+        </body>
+    </html>
+    """
