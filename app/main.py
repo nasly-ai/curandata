@@ -35,11 +35,6 @@ async def homepage(request: Request):
 async def results_page(request: Request):
     return templates.TemplateResponse("results.html", {"request": request})
 
-# Scanner page
-@app.get("/scanner", response_class=HTMLResponse)
-async def scanner_page(request: Request):
-    return templates.TemplateResponse("scanner.html", {"request": request})
-
 # Analysis page
 @app.get("/analysis", response_class=HTMLResponse)
 async def analysis_page(request: Request):
@@ -602,21 +597,35 @@ async def save_journal_entry(entry: JournalEntry):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# ===== Scanner 
+from fastapi.responses import HTMLResponse
+from fastapi import UploadFile, File
+
+# Upload form page
 @app.get("/scanner", response_class=HTMLResponse)
 async def scanner_page():
     return """
     <html>
     <head>
-        <title>Scanner - CuraData</title>
+        <title>Upload PDF for OCR - CuraData</title>
     </head>
     <body>
-        <h1>Document Scanner</h1>
-        <p>Scanner feature coming soon!</p>
-        <a href="/">Back to Home</a>
+        <h2>Upload Medical Report (PDF)</h2>
+        <form action="/scanner" enctype="multipart/form-data" method="post">
+            <input type="file" name="file" accept="application/pdf">
+            <input type="submit" value="Scan PDF">
+        </form>
     </body>
     </html>
     """
+
+# Handle file upload and scan
+@app.post("/scanner", response_class=HTMLResponse)
+async def scan_uploaded_file(file: UploadFile = File(...)):
+    # Placeholder logic: Add your Google Vision OCR function here
+    scanned_text = f"Uploaded file: {file.filename} (📄 OCR logic goes here)"
+
+    return HTMLResponse(content=f"<pre>{scanned_text}</pre>", status_code=200)
+
 
 # ===== ENHANCED UPLOAD WITH OCR AND AI ANALYSIS =====
 @app.post("/api/upload-advanced")
