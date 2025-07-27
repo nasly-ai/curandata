@@ -23,7 +23,7 @@ class HealthAnalyzer:
             'monocytes_max': 7,
             'basophils_max': 1
         }
-      
+        
         # Biomarker name variations for NLP
         self.biomarker_aliases = {
             'vitamin_d': [
@@ -46,15 +46,6 @@ class HealthAnalyzer:
             'C': '1 tsp ascorbic acid in water - for immunity',
             'D': '5000 IU D3 daily - for cognitive function',
             'E': '400 IU mixed tocopherols'
-        }
-
-class HealthAnalyzer:
-
-    def __init__(self):
-        # your setup code
-        self.abcde_protocol = {
-            'A': '25,000 IU daily...',
-            ...
         }
 
     def extract_biomarkers_from_text(self, text: str) -> Dict[str, List[Dict]]:
@@ -130,8 +121,6 @@ class HealthAnalyzer:
         
         return 'unknown'
 
-    
-    #VItamin D
     def analyze_vitamin_d(self, value):
         """Analyze vitamin D using your framework"""
         if value < 30:
@@ -205,4 +194,3 @@ class HealthAnalyzer:
                     results['summary']['recommendations'].append(analysis['recommendation'])
         
         return results
-      
