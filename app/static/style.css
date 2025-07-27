@@ -1,131 +1,200 @@
 /*
- * === CuraData Color Palette - Inspired by "Think Like A Healer" logo ===
+ * === CuraData - "Think Like A Healer" Theme ===
+ * This stylesheet preserves the journal calendar layout while applying the new color palette.
  */
+
+/* --- 1. Color Palette from your Logo --- */
 :root {
-    --bg-color: #fefdfc;         /* Soft Off-White */
-    --primary-color: #d86041;    /* Terracotta Orange */
-    --accent-color: #a56537;     /* Olive/Khaki Arc */
-    --text-color: #150101;       /* Near Black/Dark Brown */
-    --subtle-accent: #d09484;    /* Light Terracotta */
+    --bg-color: #fefdfc;         /* Soft Off-White for background */
+    --primary-color: #d86041;    /* Terracotta Orange for main elements */
+    --accent-color: #a56537;     /* Olive/Khaki for highlights and secondary buttons */
+    --text-color: #150101;       /* Near Black/Dark Brown for text */
+    --subtle-accent: #d09484;    /* Light Terracotta for hover effects */
     --border-color: #e0e0e0;     /* Light Grey for borders */
 }
 
-/* --- General Body and Typography --- */
-body {
+
+/* --- 2. General Body and Page Styles --- */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 20px;
-    line-height: 1.6;
+    background-color: var(--bg-color); /* Using the new background color */
+    min-height: 100vh;
+    color: var(--text-color); /* Using the new text color */
 }
 
-h1, h2, h3 {
-    color: var(--primary-color);
-    font-weight: 600;
+.container { 
+    max-width: 1000px; 
+    margin: 0 auto; 
+    padding: 20px; 
 }
 
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s ease;
+.header { 
+    text-align: center; 
+    color: var(--primary-color); /* Use primary color for header text */
+    margin-bottom: 2rem; 
 }
 
-a:hover {
-    color: var(--primary-color);
-    text-decoration: underline;
+.header h1 { 
+    font-size: 2.5rem; 
+    margin-bottom: 0.5rem; 
 }
 
 
-/* --- Containers and Layouts --- */
-.container {
-    max-width: 900px;
-    margin: 0 auto;
+/* --- 3. Journal Section and Calendar --- */
+.journal-section {
+    background: #ffffff; /* Keep the main content area white for readability */
     padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.07);
 }
 
-.header {
-    text-align: center;
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1rem;
 }
 
-.header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-
-
-/* --- Buttons --- */
-.btn {
-    display: inline-block;
-    padding: 12px 25px;
-    border-radius: 25px;
+.nav-btn {
+    background: var(--primary-color); /* Use new primary color */
+    color: white;
     border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 50%;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.2rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.day-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 1rem;
     text-align: center;
+    font-weight: bold;
+    color: var(--accent-color); /* Use accent color for day headers */
+}
+
+.calendar-day {
+    background: white;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.calendar-day:hover { 
+    background: var(--subtle-accent); /* Use new hover color */
+    color: white;
+}
+
+.calendar-day.today { 
+    background: var(--primary-color); /* Use new primary color for 'today' */
+    color: white; 
+}
+
+
+/* --- 4. Modal and Forms --- */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.mood-selector {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.mood-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 
+/* Style for selected mood button */
+.mood-btn:hover, input[type="radio"]:checked + .mood-btn {
+    border-color: var(--primary-color);
+    background: var(--subtle-accent);
+    color: white;
+}
+
+input[type="radio"] { display: none; }
+
+.supplement-checkboxes, .symptom-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.hidden { display: none; }
+
+
+/* --- 5. Buttons --- */
 .btn-primary {
-    background-color: var(--primary-color);
+    background: var(--primary-color); /* Use new primary color */
     color: white;
-}
-
-.btn-primary:hover {
-    background-color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-
-/* --- Forms and Inputs --- */
-input[type="file"],
-input[type="text"],
-textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
-}
-
-input[type="submit"],
-button[type="submit"] {
-    width: 100%;
-    padding: 15px;
     border: none;
-    border-radius: 8px;
-    background-color: var(--primary-color);
-    color: white;
-    font-size: 1.1rem;
-    font-weight: bold;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-weight: 600;
 }
 
-input[type="submit"]:hover,
-button[type="submit"]:hover {
-    background-color: var(--accent-color);
+.btn-secondary {
+    background: var(--accent-color); /* Use new accent color */
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-
-/* --- Specific Sections --- */
-#results-container,
-#analysis-container {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    white-space: pre-wrap; /* Preserves formatting of text */
-    font-family: 'Courier New', Courier, monospace;
+.form-actions { 
+    display: flex; 
+    gap: 1rem; 
+    justify-content: flex-end; 
+    margin-top: 2rem; 
 }
