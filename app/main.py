@@ -16,7 +16,7 @@ import io
 # Health Analyzer imports
 from typing import Optional, Dict, Any
 import logging
-from .health_analyzer import HealthAnalyzer
+from app.health_analyzer import HealthAnalyzer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
