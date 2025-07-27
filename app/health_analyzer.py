@@ -243,12 +243,12 @@ class HealthAnalyzer:
 
                 # This should be at the same indentation level as the if/elif statements
                 # Update summary
-                if analysis['priority'] == 'CRITICAL':
+        if analysis['priority'] == 'CRITICAL':
                 results['summary']['critical_findings'].append(f"{biomarker}: {analysis['status']}")
-                elif analysis['priority'] == 'HIGH':
+        elif analysis['priority'] == 'HIGH':
                 results['summary']['high_priority'].append(f"{biomarker}: {analysis['status']}")
             
-                if analysis['priority'] in ['CRITICAL', 'HIGH']:
+        if analysis['priority'] in ['CRITICAL', 'HIGH']:
                 results['summary']['recommendations'].append(analysis['recommendation'])
                 
         return results
