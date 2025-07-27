@@ -1,139 +1,39 @@
-/*
- * === CuraData - "Think Like A Healer" Theme ===
- * Styles for the Health Journal page, matching the screenshot design with brand colors.
- */
+{% extends "base.html" %}
 
-/* --- Color Palette from Logo --- */
-:root {
-    --primary-color: #d86041;    /* Terracotta Orange */
-    --accent-color: #a56537;     /* Olive/Khaki Arc */
-    --text-color-light: #ffffff; /* White text for dark backgrounds */
-    --text-color-dark: #150101;  /* Near Black for light backgrounds */
-    --card-bg: #ffffff;          /* White for the main card */
-    --page-bg: #f4f6f9;          /* A very light grey for the page background */
-    --border-color: #e0e0e0;     /* Light Grey for borders */
-}
+{% block content %}
+<div class="journal-container">
+    
+    <!-- Header Section -->
+    <div class="journal-header">
+        <h1><span class="calendar-icon">🗓️</span> Health Journal</h1>
+        <p>Track your daily symptoms and supplement effects</p>
+    </div>
 
-/* --- General Body Styles --- */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--page-bg);
-    color: var(--text-color-dark);
-    margin: 0;
-}
+    <!-- Main Calendar Card -->
+    <div class="calendar-card">
+        
+        <!-- Month Navigation -->
+        <div class="calendar-navigation">
+            <button id="prev-month-btn" class="nav-arrow">‹</button>
+            <h2 id="current-month-year"></h2>
+            <button id="next-month-btn" class="nav-arrow">›</button>
+        </div>
 
+        <!-- Day Names -->
+        <div class="day-names">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+        </div>
 
-/* --- Journal Page Container & Header --- */
-.journal-container {
-    width: 100%;
-    padding: 2rem 1rem;
-}
-
-.journal-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    color: var(--text-color-light);
-    text-align: center;
-    padding: 2.5rem 1rem;
-    border-radius: 24px;
-    margin: 0 auto;
-    max-width: 950px;
-}
-
-.journal-header h1 {
-    font-size: 2.75rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.journal-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin-top: 0.5rem;
-}
-
-.calendar-icon {
-    display: inline-block;
-    margin-right: 0.5rem;
-    transform: translateY(2px);
-}
-
-
-/* --- Main Calendar Card --- */
-.calendar-card {
-    background-color: var(--card-bg);
-    max-width: 950px;
-    margin: -3rem auto 0 auto;
-    border-radius: 24px;
-    padding: 2rem;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 10;
-}
-
-
-/* --- Calendar Navigation & Grid --- */
-.calendar-navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.calendar-navigation h2 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--text-color-dark);
-}
-
-.nav-arrow {
-    background-color: var(--primary-color);
-    color: var(--text-color-light);
-    border: none;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease;
-}
-
-.nav-arrow:hover {
-    background-color: var(--accent-color);
-}
-
-.day-names, .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-}
-
-.day-names {
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: var(--accent-color);
-}
-
-.calendar-grid {
-    gap: 5px;
-}
-
-.calendar-day {
-    padding: 1rem 0.5rem;
-    font-size: 1rem;
-    border-radius: 12px;
-    transition: background-color 0.3s ease;
-}
-
-.calendar-day:not(.empty):hover {
-    background-color: #f0f0f0;
-    cursor: pointer;
-}
-
-.calendar-day.today {
-    background-color: var(--primary-color);
-    color: var(--text-color-light);
-    font-weight: 700;
-}
+        <!-- Calendar Grid -->
+        <div class="calendar-grid" id="calendar-grid">
+            <!-- JavaScript will populate this grid -->
+        </div>
+    </div>
+</div>
+{% endblock %}
