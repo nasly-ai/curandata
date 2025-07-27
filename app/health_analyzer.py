@@ -48,6 +48,15 @@ self.abcde_protocol = {
             'E': '400 IU mixed tocopherols'
         }
 
+class HealthAnalyzer:
+
+    def __init__(self):
+        # your setup code
+        self.abcde_protocol = {
+            'A': '25,000 IU daily...',
+            ...
+        }
+
     def extract_biomarkers_from_text(self, text: str) -> Dict[str, List[Dict]]:
         """Extract biomarker values from lab report text using NLP"""
         text = text.lower()
