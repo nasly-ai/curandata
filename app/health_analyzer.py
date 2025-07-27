@@ -232,14 +232,23 @@ class HealthAnalyzer:
             if biomarker == 'vitamin_d':
                 analysis = self.analyze_vitamin_d(value)
                 results['analysis'][biomarker] = analysis
+
+        elif biomarker == 'neutrophils':
+                analysis = self.analyze_neutrophils(value)
+                results['analysis'][biomarker] = analysis
                 
+        elif biomarker == 'lymphocytes':
+                analysis = self.analyze_lymphocytes(value)
+                results['analysis'][biomarker] = analysis          
+
+                # This should be at the same indentation level as the if/elif statements
                 # Update summary
                 if analysis['priority'] == 'CRITICAL':
-                    results['summary']['critical_findings'].append(f"{biomarker}: {analysis['status']}")
+                results['summary']['critical_findings'].append(f"{biomarker}: {analysis['status']}")
                 elif analysis['priority'] == 'HIGH':
-                    results['summary']['high_priority'].append(f"{biomarker}: {analysis['status']}")
-                
+                results['summary']['high_priority'].append(f"{biomarker}: {analysis['status']}")
+            
                 if analysis['priority'] in ['CRITICAL', 'HIGH']:
-                    results['summary']['recommendations'].append(analysis['recommendation'])
-        
+                results['summary']['recommendations'].append(analysis['recommendation'])
+                
         return results
