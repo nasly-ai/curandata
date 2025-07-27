@@ -148,6 +148,55 @@ class HealthAnalyzer:
                 'retest': '6 months'
             }
 
+
+    def analyze_neutrophils(self, value):
+        """Analyze neutrophils percentage"""
+        if value < 40:
+            return {
+                'status': 'Low',
+                'recommendation': 'Low neutrophils - possible viral infection',
+                'priority': 'HIGH',
+                'explanation': 'Below normal range'
+            }
+        elif value > 74:
+            return {
+                'status': 'High',
+                'recommendation': 'High neutrophils - possible bacterial infection',
+                'priority': 'HIGH',
+                'explanation': 'Above normal range - indicates infection or inflammation'
+            }
+        elif abs(value - 60) <= 5:
+            return {
+                'status': 'Optimal',
+                'recommendation': 'Neutrophils at ideal level',
+                'priority': 'LOW',
+                'explanation': 'At your target of 60%'
+            }
+        else:
+            return {
+                'status': 'Normal',
+                'recommendation': 'Neutrophils within normal range',
+                'priority': 'LOW',
+                'explanation': 'Within acceptable range'
+            }
+
+    def analyze_lymphocytes(self, value):
+        """Analyze lymphocytes percentage"""
+        if value < 20:
+            return {
+                'status': 'Low',
+                'recommendation': 'Low lymphocytes - compromised immune function',
+                'priority': 'HIGH',
+                'explanation': 'Below normal range'
+            }
+        elif value > 40:
+            return {
+                'status': 'High',
+                'recommendation': 'High lymphocytes - possible viral infection',
+                'priority': 'MEDIUM',
+                'explanation': 'Above normal range'
+            }
+            
     def analyze_lab_report(self, text: str) -> Dict:
         """Main function to analyze a complete lab report"""
         # Extract biomarkers from text
