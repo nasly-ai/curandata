@@ -1,155 +1,37 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="page-container">
-    <!-- ======================= NAVIGATION ======================== -->
-    <nav class="main-nav">
-        <div class="logo">
-            <img src="{{ url_for('static', path='/logo.png') }}" alt="CuraData Logo" height="40">
-            <span>CuraData</span>
-        </div>
-        <div class="nav-links">
-            <a href="#">Home</a>
-            <a href="#journal-section">Journal</a>
-            <a href="#">Contact</a>
-        </div>
-    </nav>
-
-    <!-- ======================= HERO SECTION ======================== -->
-    <section class="hero-section">
-        <h1>Understand Your Medical Reports</h1>
-        <p class="subtitle">Upload your medical documents and get clear, easy-to-understand explanations powered by AI.</p>
-        <div class="hero-buttons">
-            <a href="#upload-section" class="btn btn-primary">Analyze Document</a>
-        </div>
-    </section>
-
-    <!-- ======================= MAIN CONTENT ======================== -->
-    <main class="main-content">
-        <!-- Upload Section -->
-        <section id="upload-section" class="content-section">
-            <h2>Drop your medical report here</h2>
-            <div class="drop-zone">
-                <i class="fas fa-file-medical-alt icon-large"></i>
-                <p>Drag & drop your file or click to browse</p>
-                <small>Supported: PDF, JPG, PNG</small>
-            </div>
-        </section>
-
         <!-- Features Section -->
         <section class="features-section">
-            <div class="feature-card">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Secure & Private</h3>
-                <p>Your documents are processed securely and are never stored on our servers.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-robot"></i>
-                <h3>AI-Powered</h3>
-                <p>Advanced AI translates complex medical jargon into plain, simple language.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-tachometer-alt"></i>
-                <h3>Instant Results</h3>
-                <p>No more waiting. Get your comprehensive analysis in seconds, not hours.</p>
+            <!-- ... your three feature cards are here ... -->
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- === START: NEW HEALTH CHAT SECTION (Replaces old sections) === -->
+        <!-- ======================================================= -->
+
+        <section id="health-chat-section" class="content-section">
+            <div class="chat-container">
+                <i class="fas fa-comment-medical chat-icon"></i>
+                <h2>Health Assistant</h2>
+                <p class="subtitle">Ask about medicines, symptoms, or general health questions.</p>
+                
+                <div class="suggestion-tags">
+                    <button class="tag">Aspirin</button>
+                    <button class="tag">Vitamin D</button>
+                    <button class="tag">Headache</button>
+                    <button class="tag">Fatigue</button>
+                </div>
+
+                <form class="chat-form">
+                    <input type="text" id="chat-input" placeholder="Search for a medicine or ask a question...">
+                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                </form>
+
+                <p class="disclaimer">Disclaimer: Please consult a certified Medical Practitioner for treatments. This tool is for informational purposes only.</p>
             </div>
         </section>
 
-        <!-- How It Works Section -->
-        <section class="how-it-works-section">
-            <h2>How It Works</h2>
-            <div class="steps-container">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Upload</h3>
-                    <p>Upload your medical report as a PDF or image file.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Analyze</h3>
-                    <p>Our AI reads and interprets your document's structure and data.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Understand</h3>
-                    <p>Get clear explanations and insights about your health in simple terms.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ======================= HEALTH JOURNAL ======================== -->
-        <section id="journal-section" class="content-section">
-            <div class="journal-header-single-page">
-                <h1><span class="calendar-icon">🗓️</span> Health Journal</h1>
-                <p>Track your daily symptoms and supplement effects</p>
-            </div>
-            <div class="calendar-card">
-                <div class="calendar-navigation">
-                    <button id="prev-month-btn" class="nav-arrow">‹</button>
-                    <h2 id="current-month-year"></h2>
-                    <button id="next-month-btn" class="nav-arrow">›</button>
-                </div>
-                <div class="day-names">
-                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-                </div>
-                <div class="calendar-grid" id="calendar-grid">
-                    <!-- JavaScript populates this -->
-                </div>
-            </div>
-        </section>
-    </main>
+    </main> <!-- This closes the main content section -->
 
     <!-- ======================= FOOTER ======================== -->
     <footer class="main-footer">
-        <p>© 2025 CuraData. Making medical reports easier to understand.</p>
+        <!-- ... your footer content is here ... -->
     </footer>
-</div>
-
-<!-- ======================= MODAL POP-UP (Initially Hidden) ======================== -->
-<div id="entryModal" class="modal hidden">
-    <div class="modal-content">
-        <h3>📝 Log Entry for <span id="selectedDate"></span></h3>
-        <form id="entryForm">
-            <div>
-                <label>How did you feel today?</label>
-                <div class="mood-selector">
-                    <label class="mood-btn-label"><input type="radio" name="mood" value="great"><span>😄 Great</span></label>
-                    <label class="mood-btn-label"><input type="radio" name="mood" value="good"><span>😊 Good</span></label>
-                    <label class="mood-btn-label"><input type="radio" name="mood" value="okay"><span>😐 Okay</span></label>
-                    <label class="mood-btn-label"><input type="radio" name="mood" value="poor"><span>😔 Poor</span></label>
-                </div>
-            </div>
-
-            <div>
-                <label>Supplements taken yesterday:</label>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" name="supplements" value="vitaminD"> Vitamin D</label>
-                    <label><input type="checkbox" name="supplements" value="vitaminC"> Vitamin C</label>
-                    <label><input type="checkbox" name="supplements" value="iron"> Iron</label>
-                    <label><input type="checkbox" name="supplements" value="omega3"> Omega-3</label>
-                </div>
-            </div>
-
-            <div>
-                <label>Symptoms experienced today:</label>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" name="symptoms" value="fatigue"> Fatigue</label>
-                    <label><input type="checkbox" name="symptoms" value="headache"> Headache</label>
-                    <label><input type="checkbox" name="symptoms" value="nausea"> Nausea</label>
-                    <label><input type="checkbox" name="symptoms" value="joint-pain"> Joint Pain</label>
-                </div>
-            </div>
-
-            <div>
-                <label for="notes">Notes:</label>
-                <textarea id="notes" name="notes" rows="3" placeholder="Any additional details..."></textarea>
-            </div>
-
-            <div class="form-actions">
-                <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Entry</button>
-            </div>
-        </form>
-    </div>
-</div>
-{% endblock %}
