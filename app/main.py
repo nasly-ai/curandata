@@ -96,6 +96,47 @@ async def get_all_journal_entries():
     Returns all saved journal entries.
     """
     return journal_entries
+    
+@app.post("/api/upload-advanced")
+async def upload_advanced(file: UploadFile = File(...)):
+    # Your enhanced upload logic...
+    pass  # (I've removed the implementation for brevity)
+
+
+# ===== START: ADD THE DEBUGGING ROUTE HERE (Lines 99-118) =====
+@app.get("/debug-templates")
+def debug_templates():
+    """
+    A temporary route to check if template files are found.
+    """
+    template_dir = "app/templates"
+    try:
+        files = os.listdir(template_dir)
+        return {
+            "message": "Successfully listed files.",
+            "directory": template_dir,
+            "files_found": files
+        }
+    except FileNotFoundError:
+        # This part is crucial for debugging if the directory isn't found
+        return {
+            "error": "Directory not found!",
+            "directory_searched": template_dir,
+            "current_working_directory": os.getcwd()
+        }
+    except Exception as e:
+        return {"error": str(e)}
+# ===== END: ADD THE DEBUGGING ROUTE HERE =====
+
+
+# --- Health check and test routes ---
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "CuraData API"}
+
+@app.get("/test")
+def test():
+    return {"message": "Test route works!", "status": "success"}
 
 
 # --- Other API Routes from your file ---
