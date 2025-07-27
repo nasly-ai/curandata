@@ -3,22 +3,1156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CuraData - Think Like A Healer</title>
-    
-    <link rel="stylesheet" href="/static/style.css">
-    
-    <link rel="stylesheet" 
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>CuraData - Complete Health Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        // Required configuration for the library
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
-    </script>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #fafafa;
+            color: #333;
+            line-height: 1.6;
+        }
 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: left;
+            margin-bottom: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header .nav {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .header .nav a {
+            color: #FF6B35;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .header .nav a:hover {
+            text-decoration: underline;
+        }
+
+        .main-title {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .main-title h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .main-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .tab-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #FF6B35;
+            border-bottom: 3px solid #FF6B35;
+        }
+
+        .tab-button:hover {
+            background: #f0f0f0;
+            color: #FF6B35;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        /* File Upload Styles */
+        .upload-area {
+            border: 2px dashed #FF6B35;
+            border-radius: 8px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fff;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #e55a2b;
+            background: #fff8f6;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #FF6B35;
+            margin-bottom: 1rem;
+        }
+
+        .upload-area h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .upload-area p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .upload-area .file-types {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .uploaded-files {
+            display: none;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            margin: 10px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .file-item .file-info {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .remove-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .remove-btn:hover {
+            background: #e55a2b;
+        }
+
+        .analyze-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .analyze-btn:hover {
+            background: #e55a2b;
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Calendar Styles */
+        .calendar-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h3 {
+            color: #333;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .calendar-nav:hover {
+            background: #e55a2b;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 10px 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .calendar-day:hover {
+            background: #fff8f6;
+            color: #FF6B35;
+        }
+
+        .calendar-day.today {
+            background: #FF6B35;
+            color: white;
+        }
+
+        .calendar-day.selected {
+            background: #28a745;
+            color: white;
+        }
+
+        .calendar-day.has-entry {
+            background: #fff3e0;
+            color: #FF6B35;
+        }
+
+        .calendar-day.has-entry::after {
+            content: '•';
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            color: #FF6B35;
+            font-size: 16px;
+        }
+
+        /* Feature Cards (like in your original) */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-card .icon {
+            background: #FF6B35;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+
+        .feature-card h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Symptom Tracking Styles */
+        .symptom-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .symptom-panel h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .supplement-section, .symptom-section {
+            margin-bottom: 25px;
+        }
+
+        .supplement-section h4, .symptom-section h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .supplement-grid, .symptom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .supplement-item, .symptom-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .supplement-item:hover, .symptom-item:hover {
+            border-color: #FF6B35;
+            transform: translateY(-1px);
+        }
+
+        .supplement-item.selected {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+
+        .symptom-item.selected {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .save-entry-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .save-entry-btn:hover {
+            background: #e55a2b;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafafa;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .chat-message.user {
+            background: #FF6B35;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-message.bot {
+            background: white;
+            border: 1px solid #e9ecef;
+            color: #333;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 25px;
+            margin-right: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            border-color: #FF6B35;
+        }
+
+        .chat-send-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .chat-send-btn:hover {
+            background: #e55a2b;
+        }
+
+        .analysis-result {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .entry-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid #FF6B35;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .entry-summary h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .entry-summary p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        /* Health Assistant Pills (like in your original) */
+        .health-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .topic-pill {
+            background: white;
+            border: 2px solid #FF6B35;
+            color: #FF6B35;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .topic-pill:hover {
+            background: #FF6B35;
+            color: white;
+        }
+
+        .generate-report-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .generate-report-btn:hover {
+            background: #e55a2b;
+        }
+
+        @media (max-width: 768px) {
+            .header .nav {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .calendar-grid {
+                font-size: 12px;
+            }
+            
+            .supplement-grid, .symptom-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .main-title h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    {% block content %}{% endblock %}
-    <script src="{{ url_for('static', path='/script.js') }}"></script>
+    <div class="container">
+        <div class="header">
+            <div class="logo">CuraData</div>
+            <div class="nav">
+                <a onclick="switchTab('upload')">Home</a>
+                <a onclick="switchTab('journal')">Journal</a>
+                <a onclick="switchTab('chat')">Assistant</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+
+        <div class="main-title">
+            <h1>Understand Your Bloodwork Reports</h1>
+            <p>Upload your bloodwork documents and get clear, easy-to-understand explanations powered by AI.</p>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab('upload')">📄 Document Analyzer</button>
+                <button class="tab-button" onclick="switchTab('journal')">📅 Health Journal</button>
+                <button class="tab-button" onclick="switchTab('chat')">💬 Health Assistant</button>
+            </div>
+
+            <!-- Document Upload Tab -->
+            <div id="upload-tab" class="tab-content active">
+                <div class="section-title">Drop your blood work report here</div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📄</div>
+                    <h3>Drag & drop your file or click to browse</h3>
+                    <p>Supported: PDF, JPG, PNG</p>
+                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple hidden>
+                </div>
+
+                <div id="uploadedFiles" class="uploaded-files">
+                    <h4>📋 Uploaded Files</h4>
+                    <div id="fileList"></div>
+                    <button class="analyze-btn" id="analyzeBtn" onclick="analyzeDocuments()">
+                        🔬 Analyze Documents
+                    </button>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">🔒</div>
+                        <h4>Secure & Private</h4>
+                        <p>Your documents are processed securely and are never stored on our servers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🤖</div>
+                        <h4>AI Powered</h4>
+                        <p>AI-based intelligent leading practices sound simple.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⚡</div>
+                        <h4>Instant Results</h4>
+                        <p>No more waiting. Get your comprehensive analysis in seconds, not hours.</p>
+                    </div>
+                </div>
+
+                <div id="analysisResult" class="analysis-result">
+                    <h4>🔍 Analysis Results</h4>
+                    <div id="analysisContent"></div>
+                </div>
+            </div>
+
+            <!-- Health Journal Tab -->
+            <div id="journal-tab" class="tab-content">
+                <div class="section-title">Health Journal</div>
+                <div class="section-subtitle">Track your daily symptoms and supplement effects</div>
+
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="changeMonth(-1)">‹</button>
+                        <h3 id="currentMonth">July 2025</h3>
+                        <button class="calendar-nav" onclick="changeMonth(1)">›</button>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="symptom-panel" id="symptomPanel" style="display: none;">
+                    <h3 id="selectedDateTitle">Select a date above</h3>
+                    
+                    <div class="supplement-section">
+                        <h4>💊 Supplements Taken</h4>
+                        <div class="supplement-grid" id="supplementGrid">
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Vitamin D')">Vitamin D</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Vitamin C')">Vitamin C</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'B Complex')">B Complex</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Omega 3')">Omega 3</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Magnesium')">Magnesium</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Zinc')">Zinc</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Iron')">Iron</div>
+                            <div class="supplement-item" onclick="toggleSupplement(this, 'Probiotics')">Probiotics</div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-section">
+                        <h4>😷 Symptoms Experienced</h4>
+                        <div class="symptom-grid" id="symptomGrid">
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Fatigue')">Fatigue</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Headache')">Headache</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Joint Pain')">Joint Pain</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Muscle Pain')">Muscle Pain</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Nausea')">Nausea</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Dizziness')">Dizziness</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Insomnia')">Insomnia</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Anxiety')">Anxiety</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Depression')">Depression</div>
+                            <div class="symptom-item" onclick="toggleSymptom(this, 'Digestive Issues')">Digestive Issues</div>
+                        </div>
+                    </div>
+
+                    <button class="save-entry-btn" onclick="saveJournalEntry()">💾 Save Entry</button>
+                </div>
+
+                <div id="journalEntries">
+                    <!-- Previous entries will be shown here -->
+                </div>
+            </div>
+
+            <!-- Health Chat Tab -->
+            <div id="chat-tab" class="tab-content">
+                <div class="section-title">Health Assistant</div>
+                <div class="section-subtitle">Ask about supplements, symptoms, or general health questions.</div>
+
+                <div class="health-topics">
+                    <div class="topic-pill" onclick="askQuestion('What is Vitamin D?')">Vitamin D</div>
+                    <div class="topic-pill" onclick="askQuestion('What are neutrophils?')">Neutrophils</div>
+                    <div class="topic-pill" onclick="askQuestion('What are lymphocytes?')">Lymphocytes</div>
+                    <div class="topic-pill" onclick="askQuestion('I feel tired all the time')">Fatigue</div>
+                    <div class="topic-pill" onclick="askQuestion('Joint pain symptoms')">Joint Pain</div>
+                    <div class="topic-pill" onclick="askQuestion('Sleep problems')">Sleep Issues</div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot">
+                            Hello! I'm your health assistant. You can ask me about:
+                            <br>• Interpreting lab results (Vitamin D, Neutrophils, Lymphocytes)
+                            <br>• Understanding symptoms
+                            <br>• General health questions
+                            <br>• Supplement information
+                            <br><br>How can I help you today?
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Search for a medicine or ask a question..." onkeypress="handleChatKeyPress(event)">
+                        <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+                    </div>
+                </div>
+
+                <button class="generate-report-btn" onclick="generateReport()">Generate Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentDate = new Date();
+        let selectedDate = null;
+        let journalData = {}; // Store journal entries
+        let uploadedFiles = [];
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // File Upload Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadedFilesDiv = document.getElementById('uploadedFiles');
+        const fileList = document.getElementById('fileList');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            processFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        function processFiles(files) {
+            uploadedFiles = uploadedFiles.concat(files);
+            displayUploadedFiles();
+            uploadedFilesDiv.style.display = 'block';
+        }
+
+        function displayUploadedFiles() {
+            fileList.innerHTML = '';
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span class="file-info">📄 ${file.name} (${formatFileSize(file.size)})</span>
+                    <button class="remove-btn" onclick="removeFile(${index})">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayUploadedFiles();
+            if (uploadedFiles.length === 0) {
+                uploadedFilesDiv.style.display = 'none';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function analyzeDocuments() {
+            if (uploadedFiles.length === 0) {
+                alert('Please upload files first!');
+                return;
+            }
+
+            const analysisResult = document.getElementById('analysisResult');
+            const analysisContent = document.getElementById('analysisContent');
+            
+            analysisResult.style.display = 'block';
+            analysisContent.innerHTML = 'Analyzing documents...';
+
+            // Here you would typically upload to your API
+            // For demo purposes, showing mock analysis
+            setTimeout(() => {
+                analysisContent.innerHTML = `
+                    <h4>Analysis Complete!</h4>
+                    <p><strong>Files Analyzed:</strong> ${uploadedFiles.length} file(s)</p>
+                    <p><strong>Key Findings:</strong></p>
+                    <ul>
+                        <li>Blood work values extracted successfully</li>
+                        <li>Vitamin D, Neutrophils, and Lymphocytes identified</li>
+                        <li>Analysis ready for review</li>
+                    </ul>
+                    <p><em>Connect this to your /api/upload-advanced endpoint for real analysis.</em></p>
+                `;
+            }, 2000);
+        }
+
+        // Calendar Functionality
+        function generateCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthHeader = document.getElementById('currentMonth');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            monthHeader.textContent = new Date(year, month).toLocaleDateString('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
+            });
+
+            grid.innerHTML = '';
+
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            // Empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                grid.appendChild(emptyDay);
+            }
+
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dateKey = `${year}-${month + 1}-${day}`;
+                
+                // Check if it's today
+                if (year === today.getFullYear() && 
+                    month === today.getMonth() && 
+                    day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Check if there's a journal entry for this day
+                if (journalData[dateKey]) {
+                    dayElement.classList.add('has-entry');
+                }
+                
+                dayElement.addEventListener('click', () => selectDate(year, month, day));
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            generateCalendar();
+        }
+
+        function selectDate(year, month, day) {
+            selectedDate = { year, month, day };
+            const dateKey = `${year}-${month + 1}-${day}`;
+            
+            // Update UI
+            document.querySelectorAll('.calendar-day').forEach(d => {
+                d.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Show symptom panel
+            const panel = document.getElementById('symptomPanel');
+            const title = document.getElementById('selectedDateTitle');
+            
+            panel.style.display = 'block';
+            title.textContent = `Entry for ${new Date(year, month, day).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })}`;
+            
+            // Load existing data if available
+            loadJournalEntry(dateKey);
+        }
+
+        function loadJournalEntry(dateKey) {
+            const entry = journalData[dateKey];
+            
+            // Clear previous selections
+            document.querySelectorAll('.supplement-item, .symptom-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            if (entry) {
+                // Load supplements
+                entry.supplements.forEach(supp => {
+                    const suppElement = document.querySelector(`[onclick*="${supp}"]`);
+                    if (suppElement) suppElement.classList.add('selected');
+                });
+                
+                // Load symptoms
+                entry.symptoms.forEach(symp => {
+                    const sympElement = document.querySelector(`[onclick*="${symp}"]`);
+                    if (sympElement) sympElement.classList.add('selected');
+                });
+            }
+        }
+
+        function toggleSupplement(element, supplement) {
+            element.classList.toggle('selected');
+        }
+
+        function toggleSymptom(element, symptom) {
+            element.classList.toggle('selected');
+        }
+
+        function saveJournalEntry() {
+            if (!selectedDate) {
+                alert('Please select a date first!');
+                return;
+            }
+            
+            const dateKey = `${selectedDate.year}-${selectedDate.month + 1}-${selectedDate.day}`;
+            
+            // Get selected supplements
+            const selectedSupplements = [];
+            document.querySelectorAll('.supplement-item.selected').forEach(item => {
+                const onclick = item.getAttribute('onclick');
+                const supplement = onclick.match(/'([^']+)'/)[1];
+                selectedSupplements.push(supplement);
+            });
+            
+            // Get selected symptoms
+            const selectedSymptoms = [];
+            document.querySelectorAll('.symptom-item.selected').forEach(item => {
+                const onclick = item.getAttribute('onclick');
+                const symptom = onclick.match(/'([^']+)'/)[1];
+                selectedSymptoms.push(symptom);
+            });
+            
+            // Save to journal data
+            journalData[dateKey] = {
+                supplements: selectedSupplements,
+                symptoms: selectedSymptoms,
+                date: new Date(selectedDate.year, selectedDate.month, selectedDate.day).toDateString()
+            };
+            
+            // Update calendar display
+            generateCalendar();
+            
+            // Show confirmation
+            alert('Journal entry saved successfully!');
+            
+            // Display entry summary
+            displayJournalEntries();
+        }
+
+        function displayJournalEntries() {
+            const entriesDiv = document.getElementById('journalEntries');
+            const entries = Object.values(journalData).sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (entries.length === 0) {
+                entriesDiv.innerHTML = '';
+                return;
+            }
+            
+            entriesDiv.innerHTML = '<h3 style="color: #333; margin: 20px 0 10px 0;">Recent Entries</h3>';
+            entries.slice(0, 5).forEach(entry => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry-summary';
+                entryDiv.innerHTML = `
+                    <h4>${entry.date}</h4>
+                    <p><strong>Supplements:</strong> ${entry.supplements.join(', ') || 'None'}</p>
+                    <p><strong>Symptoms:</strong> ${entry.symptoms.join(', ') || 'None'}</p>
+                `;
+                entriesDiv.appendChild(entryDiv);
+            });
+        }
+
+        // Chat Functionality
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function askQuestion(question) {
+            const input = document.getElementById('chatInput');
+            input.value = question;
+            sendChatMessage();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Simulate bot response
+            setTimeout(() => {
+                const botResponse = generateBotResponse(message);
+                addChatMessage(botResponse, 'bot');
+            }, 1000);
+        }
+
+        function addChatMessage(message, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function generateBotResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('vitamin d')) {
+                return 'Vitamin D is crucial for bone health and immune function. Normal levels are 30-100 ng/mL. Deficiency can cause fatigue, bone pain, and muscle weakness. Consider supplements, safe sun exposure, and foods like fatty fish.';
+            } else if (lowerMessage.includes('neutrophil')) {
+                return 'Neutrophils are white blood cells that fight bacterial infections. High levels (>7.7 x10³/µL) may indicate infection or inflammation. Low levels might suggest viral infections or bone marrow issues.';
+            } else if (lowerMessage.includes('lymphocyte')) {
+                return 'Lymphocytes help fight infections and diseases. Normal range is 1.2-3.4 x10³/µL. Low levels may indicate immune system weakness, while high levels could suggest viral infections.';
+            } else if (lowerMessage.includes('fatigue') || lowerMessage.includes('tired')) {
+                return 'Fatigue can be caused by many factors including vitamin deficiencies (especially D, B12), poor sleep, stress, or underlying health conditions. Consider checking your vitamin levels and discussing with your doctor.';
+            } else {
+                return 'I can help you understand lab results, symptoms, and general health questions. Feel free to ask about vitamin D, blood cell counts, or any health concerns you might have!';
+            }
+        }
+
+        function generateReport() {
+            alert('Report generation feature coming soon! This will compile your journal entries and analysis results.');
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCalendar();
+        });
+    </script>
 </body>
 </html>
