@@ -247,11 +247,33 @@ async def check_analyzer_status():
             "error": str(e)
         }
 
-# --- Other API Routes from your file ---
 @app.post("/api/upload-advanced")
 async def upload_advanced(file: UploadFile = File(...)):
-    # Your enhanced upload logic...
-    pass  # (I've removed the implementation for brevity)
+    try:
+        # Extract text from PDF
+        pdf_content = await file.read()
+        pdf_file = io.BytesIO(pdf_content)
+        pdf_reader = PdfReader(pdf_file)
+        
+        extracted_text = ""
+        for page in pdf_reader.pages:
+            extracted_text += page.extract_text()
+        
+        # IMPORTANT: Call the health analyzer here!
+        analysis_results = health_analyzer.analyze_lab_report(extracted_text)
+        
+        # Return the full analysis with status
+        return {
+            "success": True,
+            "extracted_text": extracted_text[:500],  # Preview
+            "extracted_biomarkers": analysis_results['extracted_biomarkers'],
+            "analysis": analysis_results['analysis'],  # This has Deficient/Optimal
+            "summary": analysis_results['summary']
+        }
+        
+    except Exception as e:
+        logger.error(f"Error processing file: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # --- Health check and test routes ---
