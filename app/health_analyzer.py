@@ -229,7 +229,7 @@ class HealthAnalyzer:
             }
             
             # Perform analysis based on biomarker type
-            if biomarker == 'vitamin_d':
+        if biomarker == 'vitamin_d':
                 analysis = self.analyze_vitamin_d(value)
                 results['analysis'][biomarker] = analysis
 
