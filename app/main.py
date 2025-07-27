@@ -13,7 +13,14 @@ import tempfile
 from pypdf import PdfReader
 import io
 
-# test comment
+# Health Analyzer imports
+from typing import Optional, Dict, Any
+import logging
+from health_analyzer import HealthAnalyzer
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # 2. PYDANTIC MODELS DEFINED ONCE
 # This model is for creating a new entry (what the API receives)
@@ -27,6 +34,24 @@ class JournalEntry(BaseModel):
     title: str
     content: str
     timestamp: str
+
+# After line 33, ADD ALL OF THIS:
+
+# Request/Response models for health analysis
+class HealthAnalysisRequest(BaseModel):
+    lab_text: str
+    user_id: Optional[str] = None
+    analysis_type: Optional[str] = "comprehensive"
+
+class HealthAnalysisResponse(BaseModel):
+    success: bool
+    extracted_values: Dict[str, Any]
+    detailed_analysis: Dict[str, Any]
+    summary: Dict[str, Any]
+    error_message: Optional[str] = None
+
+# Initialize the health analyzer
+health_analyzer = HealthAnalyzer()
 
 # 3. APP INITIALIZATION (ONCE)
 app = FastAPI(title="CuraData", description="Medical Document Analyzer")
@@ -133,6 +158,94 @@ async def health_check():
 def test():
     return {"message": "Test route works!", "status": "success"}
 
+
+# --- Health Analysis Routes ---
+@app.post("/api/health-analysis", response_model=HealthAnalysisResponse)
+async def analyze_health_data(request: HealthAnalysisRequest):
+    """
+    Analyze lab report text and extract key biomarkers
+    """
+    try:
+        logger.info(f"Received analysis request for user: {request.user_id}")
+        
+        # Validate input
+        if not request.lab_text or len(request.lab_text.strip()) < 10:
+            raise HTTPException(status_code=400, detail="Lab text is too short or empty")
+        
+        # Process the lab report
+        results = health_analyzer.analyze_lab_report(request.lab_text)
+        
+        # Log if no biomarkers were found
+        if not results['extracted_biomarkers']:
+            logger.warning("No biomarkers extracted from the provided text")
+            
+        # Add success flag and format response
+        response = HealthAnalysisResponse(
+            success=True,
+            extracted_values=results['extracted_biomarkers'],
+            detailed_analysis=results['analysis'],
+            summary=results['summary']
+        )
+        
+        logger.info(f"Successfully analyzed {len(results['extracted_biomarkers'])} biomarkers")
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in health analysis: {str(e)}")
+        return HealthAnalysisResponse(
+            success=False,
+            extracted_values={},
+            detailed_analysis={},
+            summary={'error': str(e)},
+            error_message=f"Analysis failed: {str(e)}"
+        )
+
+@app.post("/api/analyze-biomarker")
+async def analyze_single_biomarker(
+    biomarker_type: str,
+    value: float,
+    unit: str
+):
+    """
+    Analyze a single biomarker value
+    """
+    try:
+        if biomarker_type == "vitamin_d":
+            result = health_analyzer.analyze_vitamin_d_enhanced(value, unit)
+        elif biomarker_type == "neutrophils":
+            result = health_analyzer.analyze_neutrophils_enhanced(value, unit)
+        elif biomarker_type == "lymphocytes":
+            result = health_analyzer.analyze_lymphocytes_enhanced(value, unit)
+        else:
+            raise HTTPException(status_code=400, detail=f"Unknown biomarker type: {biomarker_type}")
+        
+        return {"success": True, "analysis": result}
+        
+    except Exception as e:
+        logger.error(f"Error analyzing biomarker: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/health-analyzer-status")
+async def check_analyzer_status():
+    """
+    Check if the health analyzer is properly initialized
+    """
+    try:
+        # Test the analyzer with a simple extraction
+        test_text = "Vitamin D: 25 ng/mL"
+        test_result = health_analyzer.extract_biomarkers_from_text(test_text)
+        
+        return {
+            "status": "healthy",
+            "analyzer_version": "2.0",
+            "supported_biomarkers": list(health_analyzer.biomarker_aliases.keys()),
+            "test_extraction": test_result
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e)
+        }
 
 # --- Other API Routes from your file ---
 @app.post("/api/upload-advanced")
