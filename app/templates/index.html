@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="page-container">
-    <!-- Navigation Bar -->
+    <!-- ======================= NAVIGATION ======================== -->
     <nav class="main-nav">
         <div class="logo">
             <img src="{{ url_for('static', path='/logo.png') }}" alt="CuraData Logo" height="40">
@@ -15,7 +15,7 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- ======================= HERO SECTION ======================== -->
     <section class="hero-section">
         <h1>Understand Your Medical Reports</h1>
         <p class="subtitle">Upload your medical documents and get clear, easy-to-understand explanations powered by AI.</p>
@@ -24,7 +24,7 @@
         </div>
     </section>
 
-    <!-- Main Content Wrapper -->
+    <!-- ======================= MAIN CONTENT ======================== -->
     <main class="main-content">
         <!-- Upload Section -->
         <section id="upload-section" class="content-section">
@@ -55,39 +55,101 @@
             </div>
         </section>
 
-  <!-- How It Works Section -->
+        <!-- How It Works Section -->
         <section class="how-it-works-section">
-            <!-- ... all the content for how it works ... -->
-        </section>
-
-        <!-- ======================================================= -->
-        <!-- === PASTE THE NEW JOURNAL SECTION CODE STARTING HERE === -->
-        <!-- ======================================================= -->
-
-        <section id="journal-section" class="content-section">
-            <div class="journal-container">
-                <div class="journal-header">
-                    <h1><span class="calendar-icon">🗓️</span> Health Journal</h1>
-                    <p>Track your daily symptoms and supplement effects</p>
+            <h2>How It Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload</h3>
+                    <p>Upload your medical report as a PDF or image file.</p>
                 </div>
-                <div class="calendar-card">
-                    <div class="calendar-navigation">
-                        <button id="prev-month-btn" class="nav-arrow">‹</button>
-                        <h2 id="current-month-year"></h2>
-                        <button id="next-month-btn" class="nav-arrow">›</button>
-                    </div>
-                    <div class="day-names">
-                        <span>Sun</span>
-                        <span>Mon</span>
-                        <span>Tue</span>
-                        <span>Wed</span>
-                        <span>Thu</span>
-                        <span>Fri</span>
-                        <span>Sat</span>
-                    </div>
-                    <div class="calendar-grid" id="calendar-grid">
-                        <!-- JavaScript will populate this grid -->
-                    </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Analyze</h3>
+                    <p>Our AI reads and interprets your document's structure and data.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Understand</h3>
+                    <p>Get clear explanations and insights about your health in simple terms.</p>
                 </div>
             </div>
         </section>
+
+        <!-- ======================= HEALTH JOURNAL ======================== -->
+        <section id="journal-section" class="content-section">
+            <div class="journal-header-single-page">
+                <h1><span class="calendar-icon">🗓️</span> Health Journal</h1>
+                <p>Track your daily symptoms and supplement effects</p>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-navigation">
+                    <button id="prev-month-btn" class="nav-arrow">‹</button>
+                    <h2 id="current-month-year"></h2>
+                    <button id="next-month-btn" class="nav-arrow">›</button>
+                </div>
+                <div class="day-names">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- JavaScript populates this -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ======================= FOOTER ======================== -->
+    <footer class="main-footer">
+        <p>© 2025 CuraData. Making medical reports easier to understand.</p>
+    </footer>
+</div>
+
+<!-- ======================= MODAL POP-UP (Initially Hidden) ======================== -->
+<div id="entryModal" class="modal hidden">
+    <div class="modal-content">
+        <h3>📝 Log Entry for <span id="selectedDate"></span></h3>
+        <form id="entryForm">
+            <div>
+                <label>How did you feel today?</label>
+                <div class="mood-selector">
+                    <label class="mood-btn-label"><input type="radio" name="mood" value="great"><span>😄 Great</span></label>
+                    <label class="mood-btn-label"><input type="radio" name="mood" value="good"><span>😊 Good</span></label>
+                    <label class="mood-btn-label"><input type="radio" name="mood" value="okay"><span>😐 Okay</span></label>
+                    <label class="mood-btn-label"><input type="radio" name="mood" value="poor"><span>😔 Poor</span></label>
+                </div>
+            </div>
+
+            <div>
+                <label>Supplements taken yesterday:</label>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="supplements" value="vitaminD"> Vitamin D</label>
+                    <label><input type="checkbox" name="supplements" value="vitaminC"> Vitamin C</label>
+                    <label><input type="checkbox" name="supplements" value="iron"> Iron</label>
+                    <label><input type="checkbox" name="supplements" value="omega3"> Omega-3</label>
+                </div>
+            </div>
+
+            <div>
+                <label>Symptoms experienced today:</label>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="symptoms" value="fatigue"> Fatigue</label>
+                    <label><input type="checkbox" name="symptoms" value="headache"> Headache</label>
+                    <label><input type="checkbox" name="symptoms" value="nausea"> Nausea</label>
+                    <label><input type="checkbox" name="symptoms" value="joint-pain"> Joint Pain</label>
+                </div>
+            </div>
+
+            <div>
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Any additional details..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Entry</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
