@@ -1,17 +1,71 @@
-        <!-- Features Section -->
-        <section class="features-section">
-            <!-- ... your three feature cards are here ... -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="logo">
+            <img src="{{ url_for('static', path='/logo.png') }}" alt="CuraData Logo" height="40">
+            <span>CuraData</span>
+        </div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#health-chat-section">Health Assistant</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <!-- ======================================================= -->
+    <!-- === THIS IS THE HERO SECTION YOU WERE LOOKING FOR === -->
+    <!-- ======================================================= -->
+    <section class="hero-section">
+        <h1>Understand Your Medical Reports</h1>
+        <p class="subtitle">Upload your medical documents and get clear, easy-to-understand explanations powered by AI.</p>
+        <div class="hero-buttons">
+            <!-- The "Analyze Document" button has been removed from here, as requested -->
+        </div>
+    </section>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-content">
+        
+        <!-- ======================================================= -->
+        <!-- === THIS IS THE UPLOAD SECTION WITH THE NEW TEXT === -->
+        <!-- ======================================================= -->
+        <section id="upload-section" class="content-section">
+            <h2>Drop your blood work report here</h2>
+            <div class="drop-zone">
+                <i class="fas fa-file-medical-alt icon-large"></i>
+                <p>Drag & drop your file or click to browse</p>
+                <small>Supported: PDF, JPG, PNG</small>
+            </div>
         </section>
 
-        <!-- ======================================================= -->
-        <!-- === START: NEW HEALTH CHAT SECTION (Replaces old sections) === -->
-        <!-- ======================================================= -->
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Secure & Private</h3>
+                <p>Your documents are processed securely and are never stored on our servers.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h3>AI-Powered</h3>
+                <p>Advanced AI translates complex medical jargon into plain, simple language.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-tachometer-alt"></i>
+                <h3>Instant Results</h3>
+                <p>No more waiting. Get your comprehensive analysis in seconds, not hours.</p>
+            </div>
+        </section>
 
+        <!-- Health Chat Section -->
         <section id="health-chat-section" class="content-section">
             <div class="chat-container">
-                <i class="fas fa-comment-health chat-icon"></i>
+                <i class="fas fa-comment-medical chat-icon"></i>
                 <h2>Health Assistant</h2>
-                <p class="subtitle">Ask about supplements, symptoms, or general health questions.</p>
+                <p class="subtitle">Ask about medicines, symptoms, or general health questions.</p>
                 
                 <div class="suggestion-tags">
                     <button class="tag">Vitamin A</button>
@@ -32,10 +86,11 @@
                 <p class="disclaimer">Disclaimer: Please consult a certified Medical Practitioner for treatments. This tool is for informational purposes only.</p>
             </div>
         </section>
+    </main>
 
-    </main> <!-- This closes the main content section -->
-
-    <!-- ======================= FOOTER ======================== -->
+    <!-- Footer -->
     <footer class="main-footer">
-        <!-- ... your footer content is here ... -->
+        <p>© 2025 CuraData. Making medical reports easier to understand.</p>
     </footer>
+</div>
+{% endblock %}
