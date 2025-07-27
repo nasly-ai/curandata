@@ -1,79 +1,86 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero">
-    <div class="hero-container">
-        <h1>Understand Your Medical Reports</h1>
-        <p class="hero-subtitle">Upload your medical documents and get clear, easy-to-understand explanations powered by AI</p>
-        
-        <div class="upload-section">
-            <div class="upload-container">
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h3>Drop your medical report here</h3>
-                    <p>or click to browse files</p>
-                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden>
-                    <div class="file-types">
-                        <span>Supported: PDF, JPG, PNG</span>
-                    </div>
-                </div>
-                
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <p class="progress-text" id="progressText">Uploading...</p>
-                </div>
-                
-                <button class="analyze-btn" id="analyzeBtn" disabled>
-                    <i class="fas fa-microscope"></i>
-                    Analyze Document
-                </button>
-            </div>
-            
-            <div class="features">
-                <div class="feature">
-                    <i class="fas fa-shield-alt"></i>
-                    <h4>Secure & Private</h4>
-                    <p>Your documents are processed securely and not stored</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-brain"></i>
-                    <h4>AI-Powered</h4>
-                    <p>Advanced AI translates medical jargon into plain language</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-clock"></i>
-                    <h4>Instant Results</h4>
-                    <p>Get your analysis in seconds, not hours</p>
-                </div>
-            </div>
+<div class="page-container">
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="logo">
+            <img src="{{ url_for('static', path='/logo.png') }}" alt="CuraData Logo" height="40">
+            <span>CuraData</span>
         </div>
-    </div>
-</div>
+        <div class="nav-links">
+            <a href="{{ url_for('homepage') }}">Home</a>
+            <a href="{{ url_for('journal_page') }}">Journal</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
 
-<div class="how-it-works">
-    <div class="container">
-        <h2>How It Works</h2>
-        <div class="steps">
-            <div class="step">
-                <div class="step-number">1</div>
-                <h3>Upload</h3>
-                <p>Upload your medical report (PDF or image)</p>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <h3>Analyze</h3>
-                <p>Our AI reads and interprets your document</p>
-            </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <h3>Understand</h3>
-                <p>Get clear explanations in simple terms</p>
-            </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1>Understand Your Medical Reports</h1>
+        <p class="subtitle">Upload your medical documents and get clear, easy-to-understand explanations powered by AI.</p>
+        <div class="hero-buttons">
+            <a href="#upload-section" class="btn btn-primary">Analyze Document</a>
         </div>
-    </div>
+    </section>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-content">
+        <!-- Upload Section -->
+        <section id="upload-section" class="content-section">
+            <h2>Drop your medical report here</h2>
+            <div class="drop-zone">
+                <i class="fas fa-file-medical-alt icon-large"></i>
+                <p>Drag & drop your file or click to browse</p>
+                <small>Supported: PDF, JPG, PNG</small>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Secure & Private</h3>
+                <p>Your documents are processed securely and are never stored on our servers.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h3>AI-Powered</h3>
+                <p>Advanced AI translates complex medical jargon into plain, simple language.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-tachometer-alt"></i>
+                <h3>Instant Results</h3>
+                <p>No more waiting. Get your comprehensive analysis in seconds, not hours.</p>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works-section">
+            <h2>How It Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload</h3>
+                    <p>Upload your medical report as a PDF or image file.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Analyze</h3>
+                    <p>Our AI reads and interprets your document's structure and data.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Understand</h3>
+                    <p>Get clear explanations and insights about your health in simple terms.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>© 2025 CuraData. Making medical reports easier to understand.</p>
+    </footer>
 </div>
 {% endblock %}
