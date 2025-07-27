@@ -64,11 +64,6 @@ async def results_page(request: Request):
 async def analysis_page(request: Request):
     return templates.TemplateResponse("analysis.html", {"request": request})
     
-@app.get("/journal", response_class=HTMLResponse)
-async def journal_page(request: Request):
-    # It's better to use a template file for large HTML content
-    return templates.TemplateResponse("journal.html", {"request": request})
-
 
 # --- Journal API Routes ---
 
