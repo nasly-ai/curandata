@@ -4,19 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CuraData - Think Like A Healer</title>
-
-    <!-- This links to your main stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
-    
-    <!-- This links to the icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-
-    <!-- This is the placeholder where your other pages (like index.html) will be inserted. -->
     {% block content %}{% endblock %}
-
     <script src="{{ url_for('static', path='/script.js') }}"></script>
-    
 </body>
 </html>
