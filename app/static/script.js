@@ -11,7 +11,7 @@
                 alert(`Searching for: "${userQuery}"... (Functionality to show results would go here)`);
                 chatInput.value = ''; // Clear the input field
             } else {
-                alert('Please enter a medicine or question.');
+                alert('Please enter a supplement or question.');
             }
         });
     }
