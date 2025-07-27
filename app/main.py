@@ -54,7 +54,7 @@ journal_entries: List[JournalEntry] = []
 # --- Page Routes ---
 @app.get("/", response_class=HTMLResponse)
 async def homepage(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("base.html", {"request": request})
 
 @app.get("/results", response_class=HTMLResponse)
 async def results_page(request: Request):
