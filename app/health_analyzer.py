@@ -24,7 +24,7 @@ class HealthAnalyzer:
             'basophils_max': 1
         }
       
-# Biomarker name variations for NLP
+        # Biomarker name variations for NLP
         self.biomarker_aliases = {
             'vitamin_d': [
                 'vitamin d', 'vit d', '25-oh-d', '25(oh)d', '25-hydroxyvitamin d',
@@ -40,7 +40,7 @@ class HealthAnalyzer:
             ]
         }
 
-self.abcde_protocol = {
+        self.abcde_protocol = {
             'A': '25,000 IU daily (75,000 when sick) - for eyes/vision',
             'B': 'B50 Complex 2/day + B12 sublingual - all B vitamins',
             'C': '1 tsp ascorbic acid in water - for immunity',
@@ -130,8 +130,8 @@ class HealthAnalyzer:
         
         return 'unknown'
 
-#VItamin D
-
+    
+    #VItamin D
     def analyze_vitamin_d(self, value):
         """Analyze vitamin D using your framework"""
         if value < 30:
@@ -159,7 +159,7 @@ class HealthAnalyzer:
                 'retest': '6 months'
             }
 
-def analyze_lab_report(self, text: str) -> Dict:
+    def analyze_lab_report(self, text: str) -> Dict:
         """Main function to analyze a complete lab report"""
         # Extract biomarkers from text
         extracted_data = self.extract_biomarkers_from_text(text)
