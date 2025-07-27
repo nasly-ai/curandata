@@ -55,32 +55,39 @@
             </div>
         </section>
 
-        <!-- How It Works Section -->
+  <!-- How It Works Section -->
         <section class="how-it-works-section">
-            <h2>How It Works</h2>
-            <div class="steps-container">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Upload</h3>
-                    <p>Upload your medical report as a PDF or image file.</p>
+            <!-- ... all the content for how it works ... -->
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- === PASTE THE NEW JOURNAL SECTION CODE STARTING HERE === -->
+        <!-- ======================================================= -->
+
+        <section id="journal-section" class="content-section">
+            <div class="journal-container">
+                <div class="journal-header">
+                    <h1><span class="calendar-icon">🗓️</span> Health Journal</h1>
+                    <p>Track your daily symptoms and supplement effects</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Analyze</h3>
-                    <p>Our AI reads and interprets your document's structure and data.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Understand</h3>
-                    <p>Get clear explanations and insights about your health in simple terms.</p>
+                <div class="calendar-card">
+                    <div class="calendar-navigation">
+                        <button id="prev-month-btn" class="nav-arrow">‹</button>
+                        <h2 id="current-month-year"></h2>
+                        <button id="next-month-btn" class="nav-arrow">›</button>
+                    </div>
+                    <div class="day-names">
+                        <span>Sun</span>
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- JavaScript will populate this grid -->
+                    </div>
                 </div>
             </div>
         </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <p>© 2025 CuraData. Making medical reports easier to understand.</p>
-    </footer>
-</div>
-{% endblock %}
