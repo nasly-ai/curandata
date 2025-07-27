@@ -1,3 +1,74 @@
+// This script runs after the entire HTML page is loaded
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 1. UPLOAD AND PDF PROCESSING LOGIC (CLIENT-SIDE) ---
+    const dropZone = document.querySelector('.drop-zone');
+    if (dropZone) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.pdf'; // We are now handling PDFs specifically
+        fileInput.style.display = 'none';
+
+        const dropZoneText = dropZone.querySelector('p');
+        const originalDropZoneText = dropZoneText.textContent;
+        const resultsDisplay = document.getElementById('results-display');
+
+        // This is the new function that processes the file in the browser
+        const processPdf = async (file) => {
+            if (!file || file.type !== 'application/pdf') {
+                alert('Please select a PDF file.');
+                return;
+            }
+
+            // Give user feedback
+            dropZoneText.textContent = 'Reading PDF...';
+            resultsDisplay.style.display = 'none'; // Hide old results
+
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+
+            reader.onload = async (event) => {
+                try {
+                    dropZoneText.textContent = 'Processing...';
+                    const pdf = await pdfjsLib.getDocument(event.target.result).promise;
+                    let fullText = '';
+
+                    // Loop through all pages of the PDF
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        fullText += pageText + '\n\n'; // Add space between pages
+                    }
+
+                    // Display the results
+                    resultsDisplay.innerHTML = `<h3>Results for ${file.name}</h3><pre>${fullText.trim()}</pre>`;
+                    resultsDisplay.style.display = 'block';
+                    dropZoneText.textContent = 'Success! Upload another file.';
+
+                } catch (error) {
+                    console.error('Error processing PDF:', error);
+                    resultsDisplay.innerHTML = `<h3 style="color: red;">Error</h3><p>Could not read this PDF. It may be corrupted or an image-only PDF.</p>`;
+                    resultsDisplay.style.display = 'block';
+                    dropZoneText.textContent = 'Processing failed. Please try again.';
+                } finally {
+                    // Reset the drop zone text after a few seconds
+                    setTimeout(() => {
+                        dropZoneText.textContent = originalDropZoneText;
+                    }, 5000);
+                }
+            };
+        };
+
+        // --- Event listeners to trigger the processing ---
+        fileInput.addEventListener('change', (e) => processPdf(e.target.files[0]));
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--accent-color)'; });
+        dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'var(--border-color)'; });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); processPdf(e.dataTransfer.files[0]); });
+        document.body.appendChild(fileInput);
+    }
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. UPLOAD SECTION LOGIC ---
