@@ -1,5 +1,3 @@
-
-
 """
 CuranData Health Analysis Framework
 Based on functional medicine principles
@@ -54,35 +52,7 @@ class HealthAnalyzer:
             'D': '5000 IU D3 daily - for cognitive function',
             'E': '400 IU mixed tocopherols'
         }
-@app.route("/api/upload-advanced", methods=["POST"])  # Decorator to link this function to the URL path
-def handle_analysis_request():                       # This function runs when a request hits the URL
-    """Handles POST requests to analyze lab report text."""
 
-    if not request.is_json:                          # Checks if the request has a JSON content type
-        return jsonify({"error": "Request must be JSON"}), 400  # Returns a 400 error if not
-
-    data = request.get_json()                        # Parses the JSON from the request into a Python dictionary
-
-    if 'text' not in data:                           # Checks if the required 'text' key exists in the data
-        return jsonify({"error": "Missing 'text' key in request body"}), 400 # Returns error if key is missing
-
-    lab_text = data['text']                          # Extracts the lab report string from the data
-
-    try:                                             # Starts a try block to handle potential errors gracefully
-        analyzer = HealthAnalyzer()                  # Creates a new instance of your analyzer class
-        results = analyzer.analyze_lab_report(lab_text)  # Runs the analysis method on the provided text
-        
-        return jsonify(results), 200                 # Returns the results as JSON with a 200 OK status
-
-    except Exception as e:                           # Catches any error that occurs in the 'try' block
-        # Returns a generic server error message, protecting your internal code details
-        return jsonify({"error": "An internal error occurred during analysis", "details": str(e)}), 500
-
-# This block runs ONLY when you execute `python app.py` on your local machine.
-# It is NOT used by Render's production server (Gunicorn).
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)                   # Starts a local development server for testing
-    
     def extract_biomarkers_from_text(self, text: str) -> Dict[str, List[Dict]]:
         """Extract biomarker values from lab report text using NLP"""
         text = text.lower()
@@ -132,106 +102,112 @@ if __name__ == "__main__":
 
     def _determine_unit(self, text: str, start: int, end: int, biomarker: str) -> str:
         """Determine the unit for a biomarker value based on context"""
-        context_start = max(0, start - 20)
-        context_end = min(len(text), end + 20)
-        context = text[context_start:context_end]
+        # Default units for known biomarkers
+        default_units = {
+            'vitamin_d': 'ng/ml',
+            'neutrophils': '%',
+            'lymphocytes': '%',
+            'wbc': 'x10³/μL',
+            'glucose': 'mg/dL',
+            'hba1c': '%',
+            'cholesterol': 'mg/dL'
+        }
         
-        if biomarker == 'vitamin_d':
-            if 'nmol/l' in context:
-                return 'nmol/L'
-            else:
-                return 'ng/mL'
+        # Check if there's a unit in the text near the match
+        context = text[max(0, start-10):min(len(text), end+10)]
         
-        elif biomarker in ['neutrophils', 'lymphocytes']:
-            if any(x in context for x in ['x10³/µl', 'x10^3/ul', '10³/µl', '10^3/ul', 'k/ul']):
-                return 'x10³/µL'
-            elif '%' in context or 'percent' in context:
-                return '%'
-            else:
-                value = float(re.search(r'(\d+\.?\d*)', context).group(1))
-                if value < 20:
-                    return 'x10³/µL'
-                else:
-                    return '%'
+        # Look for common units
+        if 'mg/dl' in context or 'mg/dL' in context:
+            return 'mg/dL'
+        elif 'ng/ml' in context or 'ng/mL' in context:
+            return 'ng/mL'
+        elif 'nmol/l' in context or 'nmol/L' in context:
+            return 'nmol/L'
+        elif '%' in context:
+            return '%'
         
-        return 'unknown'
+        # Return default unit for this biomarker if known
+        return default_units.get(biomarker, '')
 
-    def analyze_vitamin_d(self, value):
-        """Analyze vitamin D using your framework"""
-        if value < 30:
+    def analyze_vitamin_d(self, value: float) -> Dict:
+        """Analyze vitamin D levels"""
+        if value < 20:
+            return {
+                'status': 'Severely Deficient',
+                'priority': 'CRITICAL',
+                'recommendation': 'High-dose vitamin D supplementation needed',
+                'explanation': 'Severe deficiency can lead to bone disorders and immune dysfunction'
+            }
+        elif value < 30:
             return {
                 'status': 'Deficient',
-                'recommendation': 'Start 5000 IU D3 daily',
                 'priority': 'HIGH',
-                'explanation': 'Below lab normal - critical for cognitive function',
-                'retest': '8-12 weeks'
+                'recommendation': 'Vitamin D supplementation recommended',
+                'explanation': 'Below optimal range for immune function and bone health'
             }
-        elif value < 50:
+        elif value <= 80:
             return {
-                'status': 'Suboptimal',
-                'recommendation': 'Continue 5000 IU D3 daily',
-                'priority': 'MEDIUM',
-                'explanation': 'Lab normal but below YOUR optimal for cognitive health',
-                'retest': '8-12 weeks'
+                'status': 'Optimal',
+                'priority': 'NORMAL',
+                'recommendation': 'Maintain current vitamin D levels',
+                'explanation': 'Within optimal range for health'
             }
         else:
             return {
-                'status': 'Optimal',
-                'recommendation': 'Maintain current intake',
-                'priority': 'LOW',
-                'explanation': 'Excellent level for cognitive function',
-                'retest': '6 months'
+                'status': 'Potentially Toxic',
+                'priority': 'HIGH',
+                'recommendation': 'Consult healthcare provider',
+                'explanation': 'Vitamin D levels above 80 ng/mL may be toxic'
             }
 
-
-    def analyze_neutrophils(self, value):
+    def analyze_neutrophils(self, value: float) -> Dict:
         """Analyze neutrophils percentage"""
         if value < 40:
             return {
-                'status': 'Low',
-                'recommendation': 'Low neutrophils - possible viral infection',
+                'status': 'Low Neutrophils',
                 'priority': 'HIGH',
-                'explanation': 'Below normal range'
+                'recommendation': 'May indicate infection or bone marrow issue',
+                'explanation': 'Below normal range (40-75%)'
             }
-        elif value > 74:
+        elif value <= 75:
             return {
-                'status': 'High',
-                'recommendation': 'High neutrophils - possible bacterial infection',
-                'priority': 'HIGH',
-                'explanation': 'Above normal range - indicates infection or inflammation'
-            }
-        elif abs(value - 60) <= 5:
-            return {
-                'status': 'Optimal',
-                'recommendation': 'Neutrophils at ideal level',
-                'priority': 'LOW',
-                'explanation': 'At your target of 60%'
+                'status': 'Normal Neutrophils',
+                'priority': 'NORMAL',
+                'recommendation': 'No action needed',
+                'explanation': 'Within normal range (40-75%)'
             }
         else:
             return {
-                'status': 'Normal',
-                'recommendation': 'Neutrophils within normal range',
-                'priority': 'LOW',
-                'explanation': 'Within acceptable range'
+                'status': 'High Neutrophils',
+                'priority': 'HIGH',
+                'recommendation': 'May indicate infection or inflammation',
+                'explanation': 'Above normal range (40-75%)'
             }
 
-    def analyze_lymphocytes(self, value):
+    def analyze_lymphocytes(self, value: float) -> Dict:
         """Analyze lymphocytes percentage"""
         if value < 20:
             return {
-                'status': 'Low',
-                'recommendation': 'Low lymphocytes - compromised immune function',
+                'status': 'Low Lymphocytes',
                 'priority': 'HIGH',
-                'explanation': 'Below normal range'
+                'recommendation': 'May indicate immune system issue',
+                'explanation': 'Below normal range (20-40%)'
             }
-        elif value > 40:
+        elif value <= 40:
             return {
-                'status': 'High',
-                'recommendation': 'High lymphocytes - possible viral infection',
-                'priority': 'MEDIUM',
-                'explanation': 'Above normal range'
+                'status': 'Normal Lymphocytes',
+                'priority': 'NORMAL',
+                'recommendation': 'No action needed',
+                'explanation': 'Within normal range (20-40%)'
             }
-            
+        else:
+            return {
+                'status': 'High Lymphocytes',
+                'priority': 'HIGH',
+                'recommendation': 'May indicate viral infection or other condition',
+                'explanation': 'Above normal range (20-40%)'
+            }
+
     def analyze_lab_report(self, text: str) -> Dict:
         """Main function to analyze a complete lab report"""
         # Extract biomarkers from text
@@ -264,26 +240,59 @@ if __name__ == "__main__":
             }
             
             # Perform analysis based on biomarker type
-        if biomarker == 'vitamin_d':
+            analysis = {}
+            if biomarker == 'vitamin_d':
                 analysis = self.analyze_vitamin_d(value)
-                results['analysis'][biomarker] = analysis
-
-        elif biomarker == 'neutrophils':
+            elif biomarker == 'neutrophils':
                 analysis = self.analyze_neutrophils(value)
+            elif biomarker == 'lymphocytes':
+                analysis = self.analyze_lymphocytes(value)
+            
+            # Only process if we have analysis results
+            if analysis:
                 results['analysis'][biomarker] = analysis
                 
-        elif biomarker == 'lymphocytes':
-                analysis = self.analyze_lymphocytes(value)
-                results['analysis'][biomarker] = analysis          
-
-                # This should be at the same indentation level as the if/elif statements
                 # Update summary
-        if analysis['priority'] == 'CRITICAL':
-                results['summary']['critical_findings'].append(f"{biomarker}: {analysis['status']}")
-        elif analysis['priority'] == 'HIGH':
-                results['summary']['high_priority'].append(f"{biomarker}: {analysis['status']}")
-            
-        if analysis['priority'] in ['CRITICAL', 'HIGH']:
-                results['summary']['recommendations'].append(analysis['recommendation'])
+                if analysis['priority'] == 'CRITICAL':
+                    results['summary']['critical_findings'].append(f"{biomarker}: {analysis['status']}")
+                elif analysis['priority'] == 'HIGH':
+                    results['summary']['high_priority'].append(f"{biomarker}: {analysis['status']}")
                 
+                if analysis['priority'] in ['CRITICAL', 'HIGH']:
+                    results['summary']['recommendations'].append(analysis['recommendation'])
+        
         return results
+
+# API Endpoints
+@app.route("/api/analyze", methods=["POST"])
+def handle_analysis_request():
+    """Handle analysis requests from the frontend"""
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+    
+    data = request.get_json()
+    lab_text = data.get('lab_text', '')
+    
+    if not lab_text:
+        return jsonify({"error": "No lab text provided"}), 400
+    
+    try:
+        analyzer = HealthAnalyzer()
+        results = analyzer.analyze_lab_report(lab_text)
+        
+        return jsonify({
+            'success': True,
+            'extracted_values': results.get('extracted_biomarkers', {}),
+            'detailed_analysis': results.get('analysis', {}),
+            'summary': results.get('summary', {})
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# This block runs ONLY when you execute `python health_analyzer.py` on your local machine.
+# It is NOT used by Render's production server (Gunicorn).
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
