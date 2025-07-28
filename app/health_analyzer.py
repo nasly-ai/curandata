@@ -1,3 +1,5 @@
+
+
 """
 CuranData Health Analysis Framework
 Based on functional medicine principles
@@ -47,7 +49,35 @@ class HealthAnalyzer:
             'D': '5000 IU D3 daily - for cognitive function',
             'E': '400 IU mixed tocopherols'
         }
+@app.route("/api/upload-advanced", methods=["POST"])  # Decorator to link this function to the URL path
+def handle_analysis_request():                       # This function runs when a request hits the URL
+    """Handles POST requests to analyze lab report text."""
 
+    if not request.is_json:                          # Checks if the request has a JSON content type
+        return jsonify({"error": "Request must be JSON"}), 400  # Returns a 400 error if not
+
+    data = request.get_json()                        # Parses the JSON from the request into a Python dictionary
+
+    if 'text' not in data:                           # Checks if the required 'text' key exists in the data
+        return jsonify({"error": "Missing 'text' key in request body"}), 400 # Returns error if key is missing
+
+    lab_text = data['text']                          # Extracts the lab report string from the data
+
+    try:                                             # Starts a try block to handle potential errors gracefully
+        analyzer = HealthAnalyzer()                  # Creates a new instance of your analyzer class
+        results = analyzer.analyze_lab_report(lab_text)  # Runs the analysis method on the provided text
+        
+        return jsonify(results), 200                 # Returns the results as JSON with a 200 OK status
+
+    except Exception as e:                           # Catches any error that occurs in the 'try' block
+        # Returns a generic server error message, protecting your internal code details
+        return jsonify({"error": "An internal error occurred during analysis", "details": str(e)}), 500
+
+# This block runs ONLY when you execute `python app.py` on your local machine.
+# It is NOT used by Render's production server (Gunicorn).
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)                   # Starts a local development server for testing
+    
     def extract_biomarkers_from_text(self, text: str) -> Dict[str, List[Dict]]:
         """Extract biomarker values from lab report text using NLP"""
         text = text.lower()
