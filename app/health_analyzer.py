@@ -8,6 +8,11 @@ Based on functional medicine principles
 import re
 from typing import Dict, List, Optional, Tuple
 import json
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
 
 class HealthAnalyzer:
     def __init__(self):
