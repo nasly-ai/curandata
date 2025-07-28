@@ -74,8 +74,7 @@ Companies unknowingly lose productivity due to correctable deficiencies (e.g., *
 
 ## Diagram 
 
-<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/c754e872-f970-4ba5-94e1-e871d26b14d9" />
-
+<img width="610" height="372" alt="Curandata drawio" src="https://github.com/user-attachments/assets/ab009b46-9f98-401c-a2c4-0b4ad18c455d" />
 
 ## 🎯 SMART Goals
 
