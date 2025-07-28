@@ -165,7 +165,7 @@ Companies unknowingly lose productivity due to correctable deficiencies (e.g., *
 | NLP                 | Tesseract, spaCy, NLTK                      |
 | Computer Vision     | OpenCV, TensorFlow, PIL                     |
 | Data Analysis       | Pandas, NumPy, Matplotlib, Seaborn          |
-| UI / Deployment     | Streamlit, Firebase, Render, Gradio         |
+| UI / Deployment     | Streamlit, Firebase, Render,                |
 | Storage/Auth        | Firebase Firestore & Auth                   |
 | Version Control     | Git, GitHub                                 |
 | Future Integration  | FastAPI, Docker                             |
@@ -174,7 +174,7 @@ Companies unknowingly lose productivity due to correctable deficiencies (e.g., *
 
 ``` your code ```
 ## 📁 Repository Structure
-('''
+```
 curadata/
 ├── .gitignore # Ignore Python/cache files
 ├── README.md # Project overview and setup
@@ -214,7 +214,7 @@ curadata/
 │
 └── .streamlit/ # Streamlit app configuration
 └── config.toml # Theme and layout settings
-''')
+```
 
 
 ---
