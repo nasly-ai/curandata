@@ -158,7 +158,7 @@ Companies unknowingly lose productivity due to correctable deficiencies (e.g., *
 ---
 
 ## 🛠️ Tech Stack
-
+```
 | Category            | Tools / Libraries                           |
 |---------------------|---------------------------------------------|
 | Programming         | Python                                      |
@@ -169,9 +169,10 @@ Companies unknowingly lose productivity due to correctable deficiencies (e.g., *
 | Storage/Auth        | Firebase Firestore & Auth                   |
 | Version Control     | Git, GitHub                                 |
 | Future Integration  | FastAPI, Docker                             |
-
+```
 ---
 
+``` your code ```
 ## 📁 Repository Structure
 ('''
 curadata/
