@@ -35,7 +35,18 @@ class JournalEntry(BaseModel):
     content: str
     timestamp: str
 
-# After line 33, ADD ALL OF THIS:
+# JournalEntry model
+class SubscriptionRequest(BaseModel):
+    email: str
+    plan: str = "basic"  # basic, premium, enterprise
+    
+class SubscriptionResponse(BaseModel):
+    success: bool
+    message: str
+    subscription_id: Optional[str] = None
+
+# In-memory storage for subscriptions
+subscriptions: List[Dict] = []
 
 # Request/Response models for health analysis
 class HealthAnalysisRequest(BaseModel):
@@ -268,6 +279,42 @@ async def analyze_health_data(request: HealthAnalysisRequest):
             detailed_analysis={},
             summary={'error': str(e)},
             error_message=f"Analysis failed: {str(e)}"
+        )
+
+@app.post("/api/subscribe", response_model=SubscriptionResponse)
+async def subscribe(request: SubscriptionRequest):
+    """Handle subscription requests"""
+    try:
+        # Check if email already subscribed
+        existing = any(sub['email'] == request.email for sub in subscriptions)
+        if existing:
+            return SubscriptionResponse(
+                success=False,
+                message="Email already subscribed"
+            )
+        
+        # Create subscription
+        subscription = {
+            'id': len(subscriptions) + 1,
+            'email': request.email,
+            'plan': request.plan,
+            'timestamp': datetime.now().isoformat()
+        }
+        subscriptions.append(subscription)
+        
+        logger.info(f"New subscription: {request.email}")
+        
+        return SubscriptionResponse(
+            success=True,
+            message="Successfully subscribed! Check your email for details.",
+            subscription_id=str(subscription['id'])
+        )
+        
+    except Exception as e:
+        logger.error(f"Subscription error: {str(e)}")
+        return SubscriptionResponse(
+            success=False,
+            message="Subscription failed. Please try again."
         )
 
 @app.post("/api/analyze-biomarker")
