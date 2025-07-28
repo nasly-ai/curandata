@@ -3,7 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CuraData - Complete Health Platform</title>
+    <title>CuranData - Complete Health Platform</title>
+<!-- Add this section in your HTML body where you want the subscription -->
+<section class="subscription-section">
+    <h2>🚀 Get Early Access</h2>
+    <p>Join the waitlist for CuraData Premium and get:</p>
+    <ul style="list-style: none; padding: 0; margin: 1rem 0;">
+        <li>✅ Advanced biomarker analysis</li>
+        <li>✅ Personalized health insights</li>
+        <li>✅ Monthly health reports</li>
+        <li>✅ 50% off launch price</li>
+    </ul>
+    
+    <form class="subscription-form" id="subscriptionForm">
+        <input 
+            type="email" 
+            class="subscription-input" 
+            placeholder="Enter your email" 
+            id="emailInput"
+            required
+        >
+        <button type="submit" class="subscription-button">
+            Get Early Access
+        </button>
+    </form>
+    
+    <div id="subscriptionMessage" class="subscription-message"></div>
+</section>
     <style>
         * {
             margin: 0;
@@ -622,6 +648,69 @@
         }
     </style>
 </head>
+
+<!-- Add this CSS in the <head> section -->
+<style>
+    .subscription-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 1rem;
+        margin: 3rem auto;
+        max-width: 600px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .subscription-form {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .subscription-input {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        min-width: 250px;
+    }
+    
+    .subscription-button {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .subscription-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .subscription-message {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        display: none;
+    }
+    
+    .success-message {
+        background: rgba(34, 197, 94, 0.2);
+        color: #10b981;
+    }
+    
+    .error-message {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+</style>
 <body>
     <div class="container">
         <div class="header">
@@ -1283,5 +1372,54 @@
             generateCalendar();
         });
     </script>
+<!-- Add this JavaScript before closing </body> tag -->
+<script>
+document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('emailInput').value;
+    const messageDiv = document.getElementById('subscriptionMessage');
+    const submitButton = e.target.querySelector('button');
+    
+    // Disable button while submitting
+    submitButton.disabled = true;
+    submitButton.textContent = 'Subscribing...';
+    
+    try {
+        const response = await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                plan: 'basic'
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Show message
+        messageDiv.style.display = 'block';
+        messageDiv.textContent = data.message;
+        
+        if (data.success) {
+            messageDiv.className = 'subscription-message success-message';
+            document.getElementById('emailInput').value = '';
+        } else {
+            messageDiv.className = 'subscription-message error-message';
+        }
+        
+    } catch (error) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'subscription-message error-message';
+        messageDiv.textContent = 'Something went wrong. Please try again.';
+    } finally {
+        // Re-enable button
+        submitButton.disabled = false;
+        submitButton.textContent = 'Get Early Access';
+    }
+});
+</script>
 </body>
 </html>
