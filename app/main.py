@@ -119,8 +119,78 @@ async def get_all_journal_entries():
     
 @app.post("/api/upload-advanced")
 async def upload_advanced(file: UploadFile = File(...)):
-    # Your enhanced upload logic...
-    pass  # (I've removed the implementation for brevity)
+    try:
+        print(f"Received file upload: {file.filename}")
+        
+        # Extract text from PDF
+        try:
+            pdf_content = await file.read()
+            if not pdf_content:
+                raise HTTPException(status_code=400, detail="Uploaded file is empty")
+                
+            pdf_file = io.BytesIO(pdf_content)
+            
+            try:
+                pdf_reader = PdfReader(pdf_file)
+                print(f"Successfully created PDF reader, number of pages: {len(pdf_reader.pages)}")
+                
+                extracted_text = ""
+                for i, page in enumerate(pdf_reader.pages, 1):
+                    try:
+                        page_text = page.extract_text() or ""
+                        print(f"Page {i} text length: {len(page_text)} characters")
+                        extracted_text += page_text + "\n"
+                    except Exception as page_error:
+                        print(f"Error extracting text from page {i}: {str(page_error)}")
+                
+                print(f"Total extracted text length: {len(extracted_text)} characters")
+                
+                if not extracted_text.strip():
+                    raise HTTPException(status_code=400, detail="No text could be extracted from the PDF")
+                
+            except Exception as pdf_error:
+                print(f"Error reading PDF: {str(pdf_error)}")
+                raise HTTPException(status_code=400, detail=f"Error reading PDF: {str(pdf_error)}")
+            
+            # Analyze the extracted text
+            try:
+                print("Starting health analysis...")
+                analysis_results = health_analyzer.analyze_lab_report(extracted_text)
+                print("Analysis completed successfully")
+                
+                # Prepare response
+                response = {
+                    "success": True,
+                    "extracted_text": extracted_text[:500],  # Preview
+                    "extracted_biomarkers": analysis_results.get('extracted_biomarkers', {}),
+                    "analysis": analysis_results.get('analysis', {}),
+                    "summary": analysis_results.get('summary', {})
+                }
+                
+                print(f"Response prepared with {len(analysis_results.get('extracted_biomarkers', {}))} biomarkers")
+                return response
+                
+            except Exception as analysis_error:
+                print(f"Error during analysis: {str(analysis_error)}")
+                import traceback
+                traceback.print_exc()
+                raise HTTPException(status_code=500, detail=f"Error during analysis: {str(analysis_error)}")
+                
+        except HTTPException:
+            raise
+        except Exception as e:
+            print(f"Unexpected error processing file: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Unexpected error in upload_advanced: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
 # ===== START: ADD THE DEBUGGING ROUTE HERE (Lines 99-118) =====
@@ -247,35 +317,6 @@ async def check_analyzer_status():
             "error": str(e)
         }
 
-@app.post("/api/upload-advanced")
-async def upload_advanced(file: UploadFile = File(...)):
-    try:
-        # Extract text from PDF
-        pdf_content = await file.read()
-        pdf_file = io.BytesIO(pdf_content)
-        pdf_reader = PdfReader(pdf_file)
-        
-        extracted_text = ""
-        for page in pdf_reader.pages:
-            extracted_text += page.extract_text()
-        
-        # IMPORTANT: Call the health analyzer here!
-        analysis_results = health_analyzer.analyze_lab_report(extracted_text)
-        
-        # Return the full analysis with status
-        return {
-            "success": True,
-            "extracted_text": extracted_text[:500],  # Preview
-            "extracted_biomarkers": analysis_results['extracted_biomarkers'],
-            "analysis": analysis_results['analysis'],  # This has Deficient/Optimal
-            "summary": analysis_results['summary']
-        }
-        
-    except Exception as e:
-        logger.error(f"Error processing file: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
-
-
 # --- Health check and test routes ---
 @app.get("/health")
 async def health_check():
@@ -289,4 +330,3 @@ def test():
 # 6. RUN THE APP (at the very end)
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
-
