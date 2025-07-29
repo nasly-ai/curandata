@@ -1092,7 +1092,7 @@
             
             try {
                 // Call Vision API
-                const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=AIzaSyB_5WcmO7tZJOQriJn3Ch0dsMZIQiTxQTQ`, {
+                const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=API_KEY`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
