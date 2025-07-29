@@ -1120,14 +1120,57 @@
                     const brightness = (colors[0].color.red + colors[0].color.green + colors[0].color.blue) / 3;
                     isHydrated = brightness > 150; // Dark = dehydrated
                 }
-                
-                hydrationContent.innerHTML = `
-                    <h3>Result: ${isHydrated ? '✅ Hydrated' : '❌ Not Hydrated'}</h3>
-                    <p>${isHydrated ? 
-                        'Your hydration levels appear normal. Continue your current water intake.' : 
-                        'You may be dehydrated. Consider drinking more water immediately.'
-                    }</p>
-                `;
+             
+            hydrationContent.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="margin-bottom: 20px;">
+                        ${isHydrated ? 
+                            '<span style="color: #28a745; font-size: 2rem;">✅ Well Hydrated</span>' : 
+                            '<span style="color: #dc3545; font-size: 2rem;">⚠️ Dehydrated</span>'
+                        }
+                    </h3>
+                    
+                    <div style="background: ${isHydrated ? '#d4edda' : '#f8d7da'}; 
+                                border: 1px solid ${isHydrated ? '#c3e6cb' : '#f5c6cb'}; 
+                                border-radius: 8px; 
+                                padding: 20px; 
+                                margin: 20px 0;">
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">
+                            <strong>Analysis Result:</strong> ${isHydrated ? 
+                                'Your stool color indicates normal hydration levels.' : 
+                                'Your stool color suggests you may be dehydrated.'
+                            }
+                        </p>
+                        
+                        <p style="font-size: 1rem; color: #666;">
+                            <strong>Color Analysis:</strong> Brightness level ${Math.round(brightness)}/255
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #FF6B35; margin-bottom: 15px;">💧 Recommendations:</h4>
+                        <ul style="line-height: 1.8;">
+                            ${isHydrated ? `
+                                <li>Continue drinking 8-10 glasses of water daily</li>
+                                <li>Maintain your current healthy habits</li>
+                                <li>Monitor for any changes in color or consistency</li>
+                            ` : `
+                                <li><strong>Increase water intake immediately</strong> - aim for 10-12 glasses today</li>
+                                <li>Avoid caffeine and alcohol which can worsen dehydration</li>
+                                <li>Eat water-rich foods (fruits, vegetables)</li>
+                                <li>If symptoms persist, consult a healthcare provider</li>
+                            `}
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2196F3; border-radius: 4px;">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong>Note:</strong> This is an AI-based analysis for educational purposes. 
+                            For medical concerns, please consult a healthcare professional.
+                        </p>
+                    </div>
+                </div>
+            `;
                 
             } catch (error) {
                 hydrationContent.innerHTML = '<p>Error analyzing image. Please try again.</p>';
