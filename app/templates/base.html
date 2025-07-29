@@ -704,10 +704,10 @@
 
         <div class="tab-container">
             <div class="tab-buttons">
-                <button class="tab-button active" onclick="switchTab('upload')">📄 Document Analyzer</button>
-                <button class="tab-button" onclick="switchTab('hydration')"> 💧 Hydration Check</button>
-                <button class="tab-button" onclick="switchTab('journal')">📅 Health Journal</button>
-                <button class="tab-button" onclick="switchTab('chat')">💬 Health Assistant</button>
+                <button class="tab-button active" onclick="switchTab('upload', event)">📄 Document Analyzer</button>
+                <button class="tab-button" onclick="switchTab('hydration', event)"> 💧 Hydration Check</button>
+                <button class="tab-button" onclick="switchTab('journal', event)">📅 Health Journal</button>
+                <button class="tab-button" onclick="switchTab('chat', event)">💬 Health Assistant</button>
             </div>
             
             <!-- Document Upload Tab -->
@@ -902,7 +902,7 @@
         let uploadedFiles = [];
 
         // Tab switching
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
