@@ -1091,20 +1091,51 @@
             hydrationResults.style.display = 'block';
             hydrationContent.innerHTML = 'Analyzing image...';
             
-            // Simulate analysis - replace with actual API call
-            setTimeout(() => {
+        // Convert image to base64
+        const reader = new FileReader();
+        reader.onloadend = async function() {
+            const base64Image = reader.result.split(',')[1];
+            
+            try {
+                // Call Vision API
+                const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=AIzaSyB_5WcmO7tZJOQriJn3Ch0dsMZIQiTxQTQ`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        requests: [{
+                            image: {content: base64Image},
+                            features: [{type: 'IMAGE_PROPERTIES', maxResults: 1}]
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Get dominant color
+                const colors = data.responses[0].imagePropertiesAnnotation?.dominantColors?.colors || [];
+                
+                // Simple hydration check based on color
+                let isHydrated = true;
+                if (colors.length > 0) {
+                    const brightness = (colors[0].color.red + colors[0].color.green + colors[0].color.blue) / 3;
+                    isHydrated = brightness > 150; // Dark = dehydrated
+                }
+                
                 hydrationContent.innerHTML = `
-                    <p><strong>Bristol Scale Type:</strong> Type 4 (Normal)</p>
-                    <p><strong>Hydration Status:</strong> Well Hydrated ✅</p>
-                    <p><strong>Analysis:</strong> Your stool consistency indicates good hydration levels.</p>
-                    <p><strong>Recommendations:</strong></p>
-                    <ul>
-                        <li>Continue maintaining current water intake (8-10 glasses per day)</li>
-                        <li>Keep up your balanced diet with adequate fiber</li>
-                        <li>Monitor for any changes in consistency</li>
-                    </ul>
+                    <h3>Result: ${isHydrated ? '✅ Hydrated' : '❌ Not Hydrated'}</h3>
+                    <p>${isHydrated ? 
+                        'Your hydration levels appear normal. Continue your current water intake.' : 
+                        'You may be dehydrated. Consider drinking more water immediately.'
+                    }</p>
                 `;
-            }, 2000);
+                
+            } catch (error) {
+                hydrationContent.innerHTML = '<p>Error analyzing image. Please try again.</p>';
+                console.error('Vision API error:', error);
+            }
+        };
+        
+        reader.readAsDataURL(stoolImageFile);
         }
                 console.log('Response received, parsing JSON...');
                 const result = await response.json();
