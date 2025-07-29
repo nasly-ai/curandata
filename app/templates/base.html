@@ -1128,6 +1128,30 @@
             }
         }
 
+        // Hydration Analysis functionality
+        document.getElementById('stoolFileInput').addEventListener('change', handleStoolImageUpload);
+        
+        async function handleStoolImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const hydrationResults = document.getElementById('hydrationResults');
+            hydrationResults.style.display = 'block';
+            hydrationResults.innerHTML = '<div class="loading-spinner">Analyzing image...</div>';
+            
+            // Simulate analysis (replace with actual API call later)
+            setTimeout(() => {
+                hydrationResults.innerHTML = `
+                    <div class="analysis-result" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3>Hydration Analysis Results</h3>
+                        <p><strong>Bristol Scale Type:</strong> Type 4 (Normal)</p>
+                        <p><strong>Hydration Status:</strong> Well Hydrated</p>
+                        <p><strong>Recommendations:</strong> Continue maintaining current water intake.</p>
+                    </div>
+                `;
+            }, 2000);
+        }
+
         function formatBiomarkerName(name) {
             return name
                 .split('_')
