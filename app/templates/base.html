@@ -705,10 +705,11 @@
         <div class="tab-container">
             <div class="tab-buttons">
                 <button class="tab-button active" onclick="switchTab('upload')">📄 Document Analyzer</button>
+                <button class="tab-button" onclick="switchTab('hydration')"> 💧 Hydration Check</button>
                 <button class="tab-button" onclick="switchTab('journal')">📅 Health Journal</button>
                 <button class="tab-button" onclick="switchTab('chat')">💬 Health Assistant</button>
             </div>
-
+            
             <!-- Document Upload Tab -->
             <div id="upload-tab" class="tab-content active">
                 <div class="section-title">Drop your blood work report here</div>
@@ -727,7 +728,29 @@
                         🔬 Analyze Documents
                     </button>
                 </div>
-
+                
+                <div id="hydration-tab" class="tab-content" style="display: none;">
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <h2>💧 Hydration Analysis</h2>
+                        <p style="text-align: center; margin-bottom: 2rem;">
+                            Check your hydration levels using Bristol Stool Scale analysis
+                        </p>
+                        
+                        <div class="upload-area" id="stoolUploadArea">
+                            <input type="file" id="stoolFileInput" accept="image/*" style="display: none;" />
+                            <div class="upload-icon">📸</div>
+                            <h3>Upload Stool Image</h3>
+                            <p>Private & Secure Analysis</p>
+                            <button class="analyze-btn" onclick="document.getElementById('stoolFileInput').click()">
+                                Select Image
+                            </button>
+                        </div>
+                        
+                        <div id="hydrationResults" style="display: none; margin-top: 2rem;">
+                            <!-- Results will appear here -->
+                        </div>
+                    </div>
+                </div>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="icon">🔒</div>
