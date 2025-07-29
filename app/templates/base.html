@@ -774,6 +774,30 @@
                     <div id="analysisContent"></div>
                 </div>
             </div>
+            </div>
+            </div>
+            <div id="hydration-tab" class="tab-content">
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <h2>💧 Hydration Analysis</h2>
+                    <p style="text-align: center; margin-bottom: 2rem;">
+                        Check your hydration levels using Bristol Stool Scale analysis
+                    </p>
+                    
+                    <div class="upload-area" id="stoolUploadArea">
+                        <input type="file" id="stoolFileInput" accept="image/*" style="display: none;" />
+                        <div class="upload-icon">📸</div>
+                        <h3>Upload Stool Image</h3>
+                        <p>Private & Secure Analysis</p>
+                        <button class="analyze-btn" onclick="document.getElementById('stoolFileInput').click()">
+                            Select Image
+                        </button>
+                    </div>
+                    
+                    <div id="hydrationResults" style="display: none; margin-top: 2rem;">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
 
             <!-- Health Journal Tab -->
             <div id="journal-tab" class="tab-content">
