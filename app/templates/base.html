@@ -1415,6 +1415,12 @@
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             generateCalendar();
+            
+            // Add hydration event listener here
+            const stoolFileInput = document.getElementById('stoolFileInput');
+            if (stoolFileInput) {
+                stoolFileInput.addEventListener('change', handleStoolImageUpload);
+            }
         });
     </script>
 <!-- Add this JavaScript before closing </body> tag -->
