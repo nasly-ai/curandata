@@ -1110,6 +1110,7 @@
                 });
                 
                 const data = await response.json();
+                console.log('5. API Response:', data);
                 
                 // Get dominant color
                 const colors = data.responses[0].imagePropertiesAnnotation?.dominantColors?.colors || [];
