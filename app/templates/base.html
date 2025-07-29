@@ -1036,19 +1036,7 @@
                     }
                     throw new Error(errorMessage);
                 }
-                // Hydration Analysis - File handling
-        const stoolUploadArea = document.getElementById('stoolUploadArea');
-        const stoolFileInput = document.getElementById('stoolFileInput');
-        const stoolUploadedFilesDiv = document.getElementById('stoolUploadedFiles');
-        const stoolFileList = document.getElementById('stoolFileList');
-        let stoolImageFile = null;
-        
-        // Add event listeners for hydration upload
-        stoolUploadArea.addEventListener('click', () => stoolFileInput.click());
-        stoolUploadArea.addEventListener('dragover', handleDragOver);
-        stoolUploadArea.addEventListener('dragleave', handleDragLeave);
-        stoolUploadArea.addEventListener('drop', handleStoolDrop);
-        stoolFileInput.addEventListener('change', handleStoolFileSelect);
+
         
         function handleStoolDrop(e) {
             e.preventDefault();
@@ -1568,7 +1556,21 @@
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             generateCalendar();
+            // Hydration Analysis - File handling
+            const stoolUploadArea = document.getElementById('stoolUploadArea');
+            const stoolFileInput = document.getElementById('stoolFileInput');
+            const stoolUploadedFilesDiv = document.getElementById('stoolUploadedFiles');
+            const stoolFileList = document.getElementById('stoolFileList');
             
+            if (stoolUploadArea && stoolFileInput) {
+                // Add event listeners for hydration upload
+                stoolUploadArea.addEventListener('click', () => stoolFileInput.click());
+                stoolUploadArea.addEventListener('dragover', handleDragOver);
+                stoolUploadArea.addEventListener('dragleave', handleDragLeave);
+                stoolUploadArea.addEventListener('drop', handleStoolDrop);
+                stoolFileInput.addEventListener('change', handleStoolFileSelect);
+            }
+                    
             // Add hydration event listener here
             const stoolFileInput = document.getElementById('stoolFileInput');
             if (stoolFileInput) {
