@@ -898,23 +898,14 @@
     </div>
 #Start of gemini code
 <script>
-    // --- Global variables ---
+    // --- Global variables (accessible everywhere) ---
     let currentDate = new Date();
     let selectedDate = null;
-    let journalData = {}; 
+    let journalData = {};
     let uploadedFiles = [];
-    let stoolImageFile = null; 
+    let stoolImageFile = null;
 
-    // --- General Helper Functions ---
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    // --- Tab Switching ---
+    // --- Global Functions (needed by HTML onclick) ---
     function switchTab(tabName, event) {
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');
@@ -928,35 +919,139 @@
         }
     }
 
+    async function analyzeDocuments() {
+        if (uploadedFiles.length === 0) {
+            alert('Please upload files first!');
+            return;
+        }
+
+        const analysisResult = document.getElementById('analysisResult');
+        const analysisContent = document.getElementById('analysisContent');
+
+        analysisResult.style.display = 'block';
+        analysisContent.innerHTML = '<div>Processing file...</div>';
+
+        try {
+            // This is a simulation. Replace with your actual API call.
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const result = {}; // Simulated result object
+
+            let resultHTML = `
+                <h4>Analysis Complete!</h4>
+                <p><strong>File Analyzed:</strong> ${uploadedFiles[0].name}</p>
+                <p><em>(This is a simulated analysis)</em></p>
+                <div class="disclaimer-note">
+                    <strong>Disclaimer:</strong> The analysis provided by the AI is for informational and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare professional.
+                </div>
+            `;
+
+            analysisContent.innerHTML = resultHTML;
+
+        } catch (error) {
+            console.error('Error in analyzeDocuments:', error);
+            analysisContent.innerHTML = `
+                <div class="alert alert-danger">
+                    <h5>Error Processing File</h5>
+                    <p>${error.message || 'An unknown error occurred.'}</p>
+                </div>
+            `;
+        }
+    }
+
+    async function analyzeStoolImage() {
+        if (!stoolImageFile) {
+            alert('Please upload an image first!');
+            return;
+        }
+
+        const hydrationResults = document.getElementById('hydrationResults');
+        hydrationResults.style.display = 'block';
+        hydrationResults.innerHTML = '<div>🔍 Analyzing image with AI... This may take a moment.</div>';
+
+        // IMPORTANT: PASTE YOUR GOOGLE VISION API KEY HERE
+        const apiKey = "AIzaSyBf6IOheLKS-jKr-d_2EW7qZ264kzkCYWY"; 
+
+        const reader = new FileReader();
+        reader.readAsDataURL(stoolImageFile);
+        reader.onload = async () => {
+            const base64Image = reader.result.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
+
+            try {
+                const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        requests: [{
+                            image: {content: base64Image},
+                            features: [{type: 'IMAGE_PROPERTIES', maxResults: 1}]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to analyze image with Google Vision API.');
+                }
+                
+                const data = await response.json();
+                const colors = data.responses[0]?.imagePropertiesAnnotation?.dominantColors?.colors;
+                let resultHTML = '';
+
+                if (colors && colors.length > 0) {
+                    const dominantColor = colors[0].color;
+                    const isHydrated = dominantColor.red > 80 && dominantColor.green > 40 && dominantColor.blue < 100;
+                    const hydrationStatus = isHydrated ? "Likely Hydrated" : "Possible Dehydration";
+                    const colorHex = `rgb(${dominantColor.red || 0}, ${dominantColor.green || 0}, ${dominantColor.blue || 0})`;
+
+                    resultHTML = `
+                        <h3>Hydration Analysis Results</h3>
+                        <p><strong>Hydration Status:</strong> ${hydrationStatus}</p>
+                        <p><strong>Dominant Color Detected:</strong> <span style="display: inline-block; width: 20px; height: 20px; vertical-align: middle; background-color: ${colorHex}; border: 1px solid #ccc;"></span></p>
+                        <p><strong>Recommendations:</strong> ${isHydrated ? "Continue good hydration habits." : "Consider increasing your water intake."}</p>
+                    `;
+                } else {
+                    resultHTML = '<h3>Analysis Results</h3><p>Could not determine the dominant color of the image.</p>';
+                }
+
+                hydrationResults.innerHTML = `
+                    <div class="analysis-result" style="display: block; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        ${resultHTML}
+                        <div class="disclaimer-note">
+                            <strong>Disclaimer:</strong> The analysis provided is for informational purposes only and is not a substitute for professional medical advice.
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error("Vision API Error:", error);
+                hydrationResults.innerHTML = `<p>An error occurred during analysis. Please try again. (${error.message})</p>`;
+            }
+        };
+        
+        reader.onerror = (error) => {
+            console.error("File Reading Error:", error);
+            hydrationResults.innerHTML = '<p>Could not read the image file.</p>';
+        };
+    }
+
     // --- Main Initializer: Runs when the page is fully loaded ---
     document.addEventListener('DOMContentLoaded', function() {
         
-        // --- Document Analyzer Functionality ---
+        // --- Document Analyzer Setup ---
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const uploadedFilesDiv = document.getElementById('uploadedFiles');
         const fileList = document.getElementById('fileList');
 
         if (uploadArea && fileInput) {
-            const handleDragOver = (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.add('dragover');
-            };
-
-            const handleDragLeave = (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.remove('dragover');
-            };
-
+            const handleDragOver = (e) => { e.preventDefault(); e.currentTarget.classList.add('dragover'); };
+            const handleDragLeave = (e) => { e.currentTarget.classList.remove('dragover'); };
             const handleFileDrop = (e) => {
                 e.preventDefault();
                 e.currentTarget.classList.remove('dragover');
                 processFiles(Array.from(e.dataTransfer.files));
             };
-
-            const handleFileSelect = (e) => {
-                processFiles(Array.from(e.target.files));
-            };
+            const handleFileSelect = (e) => processFiles(Array.from(e.target.files));
             
             const processFiles = (files) => {
                 uploadedFiles = uploadedFiles.concat(files);
@@ -992,13 +1087,13 @@
             fileInput.addEventListener('change', handleFileSelect);
         }
 
-        // --- Hydration Analysis Functionality ---
+        // --- Hydration Analysis Setup ---
         const stoolUploadArea = document.getElementById('stoolUploadArea');
         const stoolFileInput = document.getElementById('stoolFileInput');
         const stoolUploadedFilesDiv = document.getElementById('stoolUploadedFiles');
         const stoolFileList = document.getElementById('stoolFileList');
 
-        if (stoolUploadArea && stoolFileInput && stoolUploadedFilesDiv && stoolFileList) {
+        if (stoolUploadArea && stoolFileInput) {
             const handleStoolDrop = (e) => {
                 e.preventDefault();
                 stoolUploadArea.classList.remove('dragover');
@@ -1008,7 +1103,6 @@
                     displayStoolFile();
                 }
             };
-
             const handleStoolFileSelect = (e) => {
                 const files = Array.from(e.target.files);
                 if (files.length > 0) {
@@ -1016,7 +1110,6 @@
                     displayStoolFile();
                 }
             };
-
             const displayStoolFile = () => {
                 if (!stoolImageFile) return;
                 stoolFileList.innerHTML = `
@@ -1027,135 +1120,21 @@
                 `;
                 stoolUploadedFilesDiv.style.display = 'block';
             };
-
             window.removeStoolFile = () => {
                 stoolImageFile = null;
                 stoolFileList.innerHTML = '';
                 stoolUploadedFilesDiv.style.display = 'none';
-                stoolFileInput.value = ''; // Reset the file input
+                stoolFileInput.value = '';
             };
             
-            window.analyzeStoolImage = async () => {
-                if (!stoolImageFile) {
-                    alert('Please upload an image first!');
-                    return;
-                }
-                
-                const hydrationResults = document.getElementById('hydrationResults');
-                hydrationResults.style.display = 'block';
-                hydrationResults.innerHTML = '<div>Analyzing image...</div>';
-                
-                window.analyzeStoolImage = async () => {
-            if (!stoolImageFile) {
-                alert('Please upload an image first!');
-                return;
-            }
-
-            const hydrationResults = document.getElementById('hydrationResults');
-            hydrationResults.style.display = 'block';
-            hydrationResults.innerHTML = '<div>🔍 Analyzing image with AI... This may take a moment.</div>';
-
-            // 1. Get your Google Cloud Vision API Key
-            const apiKey = "YOUR_API_KEY"; // <-- IMPORTANT: AIzaSyBf6IOheLKS-jKr-d_2EW7qZ264kzkCYWY
-
-            // 2. Convert the image file to a base64 string for the API
-            const reader = new FileReader();
-            reader.readAsDataURL(stoolImageFile);
-            reader.onload = async () => {
-                const base64Image = reader.result.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
-
-                try {
-                    // 3. Send the image to the Vision API
-                    const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            requests: [{
-                                image: {
-                                    content: base64Image
-                                },
-                                features: [{
-                                    type: 'IMAGE_PROPERTIES',
-                                    maxResults: 1
-                                }]
-                            }]
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to analyze image with Google Vision API.');
-                    }
-
-                    const data = await response.json();
-                    
-                    // 4. Analyze the dominant color from the API response
-                    const colors = data.responses[0]?.imagePropertiesAnnotation?.dominantColors?.colors;
-                    let resultHTML = '';
-
-                    if (colors && colors.length > 0) {
-                        const dominantColor = colors[0].color;
-                        // Simple logic: check the "brown-ness". More brown/dark suggests better hydration.
-                        // A more advanced check could analyze the exact RGB values against a chart.
-                        const isHydrated = dominantColor.red > 80 && dominantColor.green > 40 && dominantColor.blue < 100;
-                        const hydrationStatus = isHydrated ? "Likely Hydrated" : "Possible Dehydration";
-                        const colorHex = `rgb(${dominantColor.red || 0}, ${dominantColor.green || 0}, ${dominantColor.blue || 0})`;
-
-                        resultHTML = `
-                            <h3>Hydration Analysis Results</h3>
-                            <p><strong>Hydration Status:</strong> ${hydrationStatus}</p>
-                            <p><strong>Dominant Color Detected:</strong> <span style="display: inline-block; width: 20px; height: 20px; background-color: ${colorHex}; border: 1px solid #ccc;"></span></p>
-                            <p><strong>Recommendations:</strong> ${isHydrated ? "Continue good hydration habits." : "Consider increasing your water intake."}</p>
-                        `;
-                    } else {
-                        resultHTML = '<h3>Analysis Results</h3><p>Could not determine the dominant color of the image.</p>';
-                    }
-
-                    // 5. Display the dynamic result
-                    hydrationResults.innerHTML = `
-                        <div class="analysis-result" style="display: block; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            ${resultHTML}
-                            <div class="disclaimer-note">
-                                <strong>Disclaimer:</strong> The analysis provided is for informational purposes only and is not a substitute for professional medical advice.
-                            </div>
-                        </div>
-                    `;
-
-                } catch (error) {
-                    console.error("Vision API Error:", error);
-                    hydrationResults.innerHTML = '<p>An error occurred during analysis. Please try again.</p>';
-                }
-            };
-            
-            reader.onerror = (error) => {
-                console.error("File Reading Error:", error);
-                hydrationResults.innerHTML = '<p>Could not read the image file.</p>';
-            };
-        };
-
             stoolUploadArea.addEventListener('click', () => stoolFileInput.click());
             stoolUploadArea.addEventListener('dragover', (e) => { e.preventDefault(); stoolUploadArea.classList.add('dragover'); });
-            stoolUploadArea.addEventListener('dragleave', (e) => { e.preventDefault(); stoolUploadArea.classList.remove('dragover'); });
+            stoolUploadArea.addEventListener('dragleave', (e) => { stoolUploadArea.classList.remove('dragover'); });
             stoolUploadArea.addEventListener('drop', handleStoolDrop);
             stoolFileInput.addEventListener('change', handleStoolFileSelect);
         }
-
-        // --- Initialize Calendar (if it exists) ---
-        if(document.getElementById('calendarGrid')) {
-             // You would place your calendar functions (generateCalendar, etc.) here
-        }
-        
-        // --- Subscription Form Functionality ---
-        const subscriptionForm = document.getElementById('subscriptionForm');
-        if (subscriptionForm) {
-            subscriptionForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                // ... your form submission logic ...
-            });
-        }
     });
-</script>    
+</script>   
 #ending of Gemini code
 document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
     e.preventDefault();
