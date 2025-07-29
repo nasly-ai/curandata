@@ -729,13 +729,22 @@
                     </button>
                 </div>
                 
-            <div id="hydration-tab" class="tab-content" 
+            <div id="hydration-tab" class="tab-content active" 
+                <div class="section-title">Drop your stool picture here</div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📄</div>
+                    <h3>Drag & drop your file or click to browse</h3>
+                    <p>Supported: PDF, JPG, PNG</p>
+                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple hidden>
+                </div>
+                
                 <div style="max-width: 600px; margin: 0 auto;">
                     <h2>💧 Hydration Analysis</h2>
                     <p style="text-align: center; margin-bottom: 2rem;">
                         Check your hydration levels using Bristol Stool Scale analysis
                     </p>
-                    
+                </div>   
                     <div class="upload-area" id="stoolUploadArea">
                         <input type="file" id="stoolFileInput" accept="image/*" style="display: none;" />
                         <div class="upload-icon">📸</div>
@@ -776,7 +785,7 @@
             </div>
            
            
-            <div id="hydration-tab" class="tab-content">
+            <div id="hydration-tab" class="tab-content active">
                 <div style="max-width: 600px; margin: 0 auto;">
                     <h2>💧 Hydration Analysis</h2>
                     <p style="text-align: center; margin-bottom: 2rem;">
@@ -968,7 +977,7 @@
                 fileList.appendChild(fileItem);
             });
         }
-
+        
         function removeFile(index) {
             uploadedFiles.splice(index, 1);
             displayUploadedFiles();
@@ -1033,7 +1042,82 @@
                     }
                     throw new Error(errorMessage);
                 }
-
+                // Hydration Analysis - File handling
+        const stoolUploadArea = document.getElementById('stoolUploadArea');
+        const stoolFileInput = document.getElementById('stoolFileInput');
+        const stoolUploadedFilesDiv = document.getElementById('stoolUploadedFiles');
+        const stoolFileList = document.getElementById('stoolFileList');
+        let stoolImageFile = null;
+        
+        // Add event listeners for hydration upload
+        stoolUploadArea.addEventListener('click', () => stoolFileInput.click());
+        stoolUploadArea.addEventListener('dragover', handleDragOver);
+        stoolUploadArea.addEventListener('dragleave', handleDragLeave);
+        stoolUploadArea.addEventListener('drop', handleStoolDrop);
+        stoolFileInput.addEventListener('change', handleStoolFileSelect);
+        
+        function handleStoolDrop(e) {
+            e.preventDefault();
+            stoolUploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                stoolImageFile = files[0];
+                displayStoolFile();
+            }
+        }
+        
+        function handleStoolFileSelect(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                stoolImageFile = files[0];
+                displayStoolFile();
+            }
+        }
+        
+        function displayStoolFile() {
+            stoolFileList.innerHTML = `
+                <div class="file-item">
+                    <span class="file-info">📷 ${stoolImageFile.name} (${formatFileSize(stoolImageFile.size)})</span>
+                    <button class="remove-btn" onclick="removeStoolFile()">Remove</button>
+                </div>
+            `;
+            stoolUploadedFilesDiv.style.display = 'block';
+        }
+        
+        function removeStoolFile() {
+            stoolImageFile = null;
+            stoolFileList.innerHTML = '';
+            stoolUploadedFilesDiv.style.display = 'none';
+            stoolFileInput.value = '';
+        }
+        
+        async function analyzeStoolImage() {
+            if (!stoolImageFile) {
+                alert('Please upload an image first!');
+                return;
+            }
+            
+            const hydrationResults = document.getElementById('hydrationResults');
+            const hydrationContent = document.getElementById('hydrationContent');
+            
+            hydrationResults.style.display = 'block';
+            hydrationContent.innerHTML = 'Analyzing image...';
+            
+            // Simulate analysis - replace with actual API call
+            setTimeout(() => {
+                hydrationContent.innerHTML = `
+                    <p><strong>Bristol Scale Type:</strong> Type 4 (Normal)</p>
+                    <p><strong>Hydration Status:</strong> Well Hydrated ✅</p>
+                    <p><strong>Analysis:</strong> Your stool consistency indicates good hydration levels.</p>
+                    <p><strong>Recommendations:</strong></p>
+                    <ul>
+                        <li>Continue maintaining current water intake (8-10 glasses per day)</li>
+                        <li>Keep up your balanced diet with adequate fiber</li>
+                        <li>Monitor for any changes in consistency</li>
+                    </ul>
+                `;
+            }, 2000);
+        }
                 console.log('Response received, parsing JSON...');
                 const result = await response.json();
                 console.log('Analysis result:', result);
