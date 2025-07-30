@@ -9,7 +9,7 @@
 ## 🔍 Problem Statement
 
 ### Primary Problem  
-The American workforce suffers from a **$530 billion annual productivity crisis** caused by **undiagnosed cognitive dysfunction** linked to correctable biomarker imbalances. Current healthcare systems treat symptoms with pharmaceuticals rather than addressing root causes.
+The American workforce suffers from a **$530 billion annual productivity crisis** caused by **undiagnosed cognitive dysfunction** linked to correctable biomarker imbalances. Current healthcare systems treat symptoms rather than addressing root causes.
 
 ### Specific Issues Identified  
 - **Communication Breakdown**: Inability to articulate ideas clearly  
