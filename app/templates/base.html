@@ -1641,7 +1641,47 @@
 
         // Placeholder functions for missing functionality
         function analyzeDocuments() {
-            alert('Document analysis coming soon!');
+            if (uploadedFiles.length === 0) {
+                alert('Please upload files first!');
+                return;
+            }
+            
+            const analysisResult = document.getElementById('analysisResult');
+            const analysisContent = document.getElementById('analysisContent');
+            
+            if (analysisResult && analysisContent) {
+                analysisResult.style.display = 'block';
+                analysisContent.innerHTML = `
+                    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3>📊 Analysis Results</h3>
+                        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                            <h4>🩺 Key Biomarkers Found:</h4>
+                            <p><strong>Vitamin D:</strong> 32 ng/mL (Normal: 30-100) - Consider optimization to 50+ for cognitive health</p>
+                            <p><strong>WBC Count:</strong> 7.2 (Normal: 4.0-11.0) - Within range</p>
+                            <p><strong>Neutrophils:</strong> 68% (Optimal: 60%) - Slightly elevated</p>
+                            <p><strong>Lymphocytes:</strong> 25% (Optimal: 30%) - Could be optimized</p>
+                        </div>
+                        <div style="margin: 20px 0; padding: 15px; background: #fff3e0; border-left: 4px solid #FF6B35; border-radius: 6px;">
+                            <h4>💡 ABCDE Protocol Recommendations:</h4>
+                            <p><strong>A:</strong> 25,000 IU Vitamin A daily</p>
+                            <p><strong>B:</strong> B-Complex + B12 sublingual</p>
+                            <p><strong>C:</strong> Ascorbic acid to bowel tolerance</p>
+                            <p><strong>D:</strong> Increase to 5,000 IU D3 daily</p>
+                            <p><strong>E:</strong> 400 IU mixed tocopherols</p>
+                        </div>
+                        <div style="margin: 20px 0; padding: 15px; background: #e8f5e8; border-radius: 6px;">
+                            <h4>💼 Business Impact Analysis:</h4>
+                            <p><strong>Cognitive Risk Factors:</strong> Vitamin D suboptimal for peak performance</p>
+                            <p><strong>Productivity Potential:</strong> +15% improvement with optimization</p>
+                            <p><strong>Estimated Annual Value:</strong> $12,000 - $18,000 in improved output</p>
+                        </div>
+                        <p style="margin-top: 20px; font-size: 0.9rem; color: #666; font-style: italic;">
+                            *This is a demo analysis showcasing CuraData's functional medicine approach. 
+                            Real AI analysis integrates with your actual lab values for personalized insights.
+                        </p>
+                    </div>
+                `;
+            }
         }
 
         async function analyzeStoolImage() {
