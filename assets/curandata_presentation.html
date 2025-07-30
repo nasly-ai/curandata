@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CuraData - Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #333333;
+            overflow: hidden;
+        }
+
+        /* Navigation Bar - Match your existing site */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            z-index: 2000;
+            border-bottom: 1px solid rgba(255, 87, 34, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #FF5722, #FF7043);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #666666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #FF5722;
+            background: rgba(255, 87, 34, 0.1);
+        }
+
+        /* Presentation Container */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            padding-top: 80px; /* Account for navbar */
+        }
+
+        .slide {
+            width: 100%;
+            height: calc(100vh - 80px);
+            display: none;
+            padding: 60px 80px;
+            position: absolute;
+            top: 80px;
+            left: 0;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF5722, #FF7043, #FF8A65);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .slide h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #FF5722;
+            margin-bottom: 40px;
+            line-height: 1.3;
+        }
+
+        .slide h3 {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #FF5722;
+            margin-bottom: 25px;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #666666;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .bullet-points {
+            list-style: none;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #333333;
+        }
+
+        .bullet-points li {
+            margin: 20px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .bullet-points li:before {
+            content: '▶';
+            color: #FF5722;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+        }
+
+        .highlight-box {
+            background: rgba(255, 87, 34, 0.05);
+            border: 2px solid #FF5722;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .big-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #FF5722;
+            margin: 20px 0;
+        }
+
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            gap: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 87, 34, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF5722, #FF6B35);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .step h4 {
+            font-size: 1.4rem;
+            color: #FF5722;
+            margin-bottom: 15px;
+        }
+
+        .step p {
+            font-size: 1rem;
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #FF5722;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            color: #333333;
+        }
+
+        .tech-item h4 {
+            color: #FF5722;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #FF5722, #FF6B35);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 87, 34, 0.3);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666666;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-mockup {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(255, 87, 34, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 87, 34, 0.3);
+        }
+
+        .metric-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FF5722;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+
+        .author-info {
+            position: fixed;
+            top: 30px;
+            right: 100px;
+            text-align: right;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .slide {
+                padding: 40px 30px;
+            }
+            
+            .slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .slide h2 {
+                font-size: 2rem;
+            }
+            
+            .process-steps {
+                flex-direction: column;
+            }
+            
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar - Match your existing site structure -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">CuraData</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="journal.html">Journal</a></li>
+                <li><a href="assistant.html">Assistant</a></li>
+                <li><a href="presentation.html" class="active">Presentation</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="author-info">
+        Nasly Duarte | MDC CAI2840C<br>
+        Girlgoneverde Brand
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="content">
+                <h1>CuraData: AI Health Coach</h1>
+                <p class="subtitle">Transforming Workplace Productivity Through Cognitive Health Optimization</p>
+                <div class="highlight-box">
+                    <h3>From Accountant to Healer: Scaling Personal Health Transformation Through AI</h3>
+                    <p style="font-size: 1.2rem; margin-top: 20px;">Final Project: NLP & Computer Vision</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Executive Summary -->
+        <div class="slide">
+            <div class="content">
+                <h2>Executive Summary: The Answer</h2>
+                <div class="highlight-box">
+                    <div class="big-number">$530B</div>
+                    <p style="font-size: 1.4rem;">Annual productivity loss from undiagnosed cognitive dysfunction</p>
+                </div>
+                <ul class="bullet-points">
+                    <li><strong>Problem:</strong> 75% of workforce has vitamin D deficiency causing cognitive decline</li>
+                    <li><strong>Solution:</strong> AI-powered functional medicine analysis using NLP + Computer Vision</li>
+                    <li><strong>Impact:</strong> $15,000+ productivity recovery per employee annually</li>
+                    <li><strong>Innovation:</strong> First platform combining lab analysis with biological samples</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Problem Statement -->
+        <div class="slide">
+            <div class="content">
+                <h2>The Hidden Productivity Crisis</h2>
+                <p class="subtitle">20 Years of Business Observations Revealed the Pattern</p>
+                
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-number">65%</div>
+                        <div class="metric-label">Have Vitamin D Deficiency</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-number">40%</div>
+                        <div class="metric-label">Cognitive Decline</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-number">2x</div>
+                        <div class="metric-label">Turnover Risk</div>
+                    </div>
+                </div>
+
+                <ul class="bullet-points">
+                    <li>Communication breakdown in meetings and emails</li>
+                    <li>Inability to learn new skills or adapt to change</li>
+                    <li>Depression and irritability destroying team dynamics</li>
+                    <li>Memory issues impacting accuracy and performance</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: AI Solution Framework -->
+        <div class="slide">
+            <div class="content">
+                <h2>AI Solution: Simple Yet Powerful</h2>
+                <p class="subtitle">Classification + Prediction + Personalization</p>
+                
+                <div class="process-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h4>Upload Lab Results</h4>
+                        <p>NLP extracts 5 key cognitive biomarkers from PDFs using OCR + spaCy</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h4>AI Analysis</h4>
+                        <p>Computer Vision analyzes biological samples. AI identifies cognitive risk factors</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h4>ROI Report</h4>
+                        <p>Personalized ABCDE protocol with productivity cost analysis</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Core Innovation: Functional Medicine Meets AI</h3>
+                    <p>Precise target values (not ranges) + Gender-specific optimization + Business ROI focus</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Technology Stack -->
+        <div class="slide">
+            <div class="content">
+                <h2>Technology Architecture</h2>
+                <p class="subtitle">Enterprise-Ready AI Platform</p>
+
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <h4>NLP Engine</h4>
+                        <p>spaCy, NLTK, Tesseract OCR for lab report processing</p>
+                    </div>
+                    <div class="tech-item">
+                        <h4>Computer Vision</h4>
+                        <p>OpenCV, TensorFlow for Bristol Stool Scale classification</p>
+                    </div>
+                    <div class="tech-item">
+                        <h4>User Interface</h4>
+                        <p>Streamlit chatbot with real-time analysis capabilities</p>
+                    </div>
+                    <div class="tech-item">
+                        <h4>Data Processing</h4>
+                        <p>Pandas, NumPy for biomarker analysis and ROI calculations</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>5 Key Biomarkers for Cognitive Function</h3>
+                    <p>Vitamin D (50+) • Immune System (WBC=6) • Cholesterol (Gender-specific) • Iron Panel • Glucose</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue with remaining slides... -->
+        <div class="slide">
+            <div class="content" style="text-align: center;">
+                <h1 style="margin-bottom: 40px;">Thank You</h1>
+                <div class="highlight-box">
+                    <h3>Ready for Questions & Live Demo</h3>
+                    <p style="font-size: 1.3rem; margin: 30px 0;">
+                        "Democratizing cognitive health optimization for working professionals through functional medicine principles and AI technology"
+                    </p>
+                    <div style="margin-top: 40px;">
+                        <p><strong>Nasly Duarte</strong> | Girlgoneverde Brand</p>
+                        <p>MDC Summer 2025 | CAI2840C NLP & Computer Vision</p>
+                    </div>
+                </div>
+                <p style="margin-top: 40px; font-size: 1.1rem; color: #94a3b8;">
+                    Contact: Think Like a Healer Initiative
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">6</span>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Fullscreen toggle
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Add fullscreen button functionality
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>
