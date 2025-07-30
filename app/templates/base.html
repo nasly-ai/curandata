@@ -1053,56 +1053,7 @@
         }
     });
 </script>
-</script>   
-#ending of Gemini code
-document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
     
-    const email = document.getElementById('emailInput').value;
-    const messageDiv = document.getElementById('subscriptionMessage');
-    const submitButton = e.target.querySelector('button');
-    
-    // Disable button while submitting
-    submitButton.disabled = true;
-    submitButton.textContent = 'Subscribing...';
-    
-    try {
-        const response = await fetch('/api/subscribe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email,
-                plan: 'basic'
-            })
-        });
-        
-        const data = await response.json();
-        
-        // Show message
-        messageDiv.style.display = 'block';
-        messageDiv.textContent = data.message;
-        
-        if (data.success) {
-            messageDiv.className = 'subscription-message success-message';
-            document.getElementById('emailInput').value = '';
-        } else {
-            messageDiv.className = 'subscription-message error-message';
-        }
-        
-    } catch (error) {
-        messageDiv.style.display = 'block';
-        messageDiv.className = 'subscription-message error-message';
-        messageDiv.textContent = 'Something went wrong. Please try again.';
-    } finally {
-        // Re-enable button
-        submitButton.disabled = false;
-        submitButton.textContent = 'Join Newsletter';
-    }
-});
-</script>
-    <!-- Add this section in your HTML body where you want the subscription -->
 <section class="subscription-section">
     <h2>🚀 Join Newsletter</h2>
     <p>Join the waitlist for CuranData Premium and get:</p>
