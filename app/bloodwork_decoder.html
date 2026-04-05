@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CuraData — Functional Blood Work Decoder</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --terracotta: #C4622D;
+    --terracotta-light: #F2E8E0;
+    --terracotta-dark: #8B3E18;
+    --bark: #3D2B1F;
+    --bark-mid: #6B4A35;
+    --sage: #5C7A5E;
+    --sage-light: #E8F0E8;
+    --cream: #FAF7F2;
+    --cream-dark: #F0EBE3;
+    --ink: #1E1612;
+    --muted: #8A7B72;
+    --blue-soft: #E8F0F8;
+    --blue-text: #2C5F8A;
+    --amber-soft: #FDF3E0;
+    --amber-text: #8A5C00;
+    --green-soft: #E8F4EA;
+    --green-text: #2A6B35;
+    --red-soft: #FDECEA;
+    --red-text: #8A2A2A;
+    --purple-soft: #F0EDFB;
+    --purple-text: #4A3580;
+    --border: rgba(61,43,31,0.12);
+    --border-mid: rgba(61,43,31,0.2);
+    --shadow-sm: 0 1px 3px rgba(61,43,31,0.08);
+    --shadow-md: 0 4px 16px rgba(61,43,31,0.1);
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--bark);
+    color: var(--cream);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .logo-block { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--terracotta);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: white; flex-shrink: 0;
+  }
+  .logo-text { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--cream); }
+  .logo-sub { font-size: 11px; color: rgba(250,247,242,0.6); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+  .header-meta { text-align: right; }
+  .header-meta p { font-size: 11px; color: rgba(250,247,242,0.5); }
+  .header-meta strong { color: rgba(250,247,242,0.85); font-weight: 500; }
+
+  /* MAIN LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* MISSION STRIP */
+  .mission-strip {
+    background: var(--terracotta-light);
+    border-left: 4px solid var(--terracotta);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.75rem;
+    font-size: 13px;
+    color: var(--bark);
+    line-height: 1.65;
+  }
+  .mission-strip strong { color: var(--terracotta-dark); font-weight: 600; }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .stat-val { font-size: 28px; font-weight: 600; color: var(--bark); font-family: 'DM Mono', monospace; }
+  .stat-val.green { color: var(--sage); }
+  .stat-val.amber { color: #B07000; }
+  .stat-val.red { color: var(--terracotta-dark); }
+
+  /* META ROW */
+  .meta-row {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: .75rem 1rem;
+  }
+  .meta-row label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .meta-row input {
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border-mid); border-radius: var(--r-sm);
+    padding: 4px 8px; background: var(--cream); color: var(--ink);
+  }
+  .meta-row input:focus { outline: none; border-color: var(--terracotta); }
+
+  /* LEGEND */
+  .legend {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .ld { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* TAB NAV */
+  .tab-nav {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: .75rem;
+  }
+  .tab-btn {
+    font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+    padding: 6px 14px; border-radius: 20px;
+    border: 1.5px solid var(--border-mid);
+    background: white; color: var(--muted);
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
+  .tab-btn.active { background: var(--bark); color: var(--cream); border-color: var(--bark); }
+  .tab-btn.protocol { border-color: var(--sage); color: var(--sage); }
+  .tab-btn.protocol.active { background: var(--sage); color: white; border-color: var(--sage); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* PANEL HEADER */
+  .panel-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .panel-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .panel-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--bark); }
+  .panel-sub { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
+  /* SECTION */
+  .sec { margin-bottom: 1.25rem; }
+  .sec-name {
+    font-size: 10px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: .5rem; padding-left: 2px;
+  }
+
+  /* TABLE CARD */
+  .tcard {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-bottom: .75rem;
+    box-shadow: var(--shadow-sm);
+  }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th {
+    font-size: 10px; font-weight: 600; color: var(--muted);
+    text-align: left; padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream-dark);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  td {
+    font-size: 12px; padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink); vertical-align: top; word-wrap: break-word;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(196,98,45,0.03); }
+  .mn { font-weight: 600; font-size: 12px; color: var(--bark); }
+  .std { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .opt { font-size: 11px; color: var(--blue-text); font-weight: 600; font-family: 'DM Mono', monospace; }
+
+  /* BADGES */
+  .badge {
+    display: inline-block; border-radius: 4px;
+    padding: 2px 6px; font-size: 10.5px; margin-bottom: 2px;
+    line-height: 1.5;
+  }
+  .lm { background: var(--blue-soft); color: var(--blue-text); }
+  .hm { background: var(--red-soft); color: var(--red-text); }
+  .sl { background: var(--green-soft); color: var(--green-text); margin-top: 2px; }
+  .sh { background: var(--amber-soft); color: var(--amber-text); margin-top: 2px; }
+  .res {
+    background: var(--purple-soft); color: var(--purple-text);
+    cursor: pointer; margin-top: 2px;
+  }
+  .res:hover { background: #E0D8F8; }
+
+  /* INPUTS */
+  .val-in {
+    width: 100%; border: 1px solid var(--border-mid);
+    border-radius: var(--r-sm); padding: 4px 6px;
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    background: var(--cream); color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .val-in:focus { outline: none; border-color: var(--terracotta); background: white; }
+
+  .stat-sel {
+    width: 100%; font-size: 11px; font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border-mid); border-radius: var(--r-sm);
+    padding: 4px 5px; background: var(--cream); color: var(--ink);
+    cursor: pointer;
+  }
+  .stat-sel.os { border-color: var(--sage); background: var(--green-soft); color: var(--green-text); }
+  .stat-sel.ls { border-color: var(--blue-text); background: var(--blue-soft); color: var(--blue-text); }
+  .stat-sel.hs { border-color: var(--terracotta-dark); background: var(--red-soft); color: var(--red-text); }
+
+  /* NOTES */
+  .notes-wrap { padding: .6rem .75rem; border-top: 1px solid var(--border); background: var(--cream); }
+  .notes-wrap textarea {
+    width: 100%; font-size: 12px; font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border-mid); border-radius: var(--r-sm);
+    padding: 6px 8px; resize: vertical; min-height: 48px;
+    background: white; color: var(--ink);
+  }
+  .notes-wrap textarea:focus { outline: none; border-color: var(--terracotta); }
+
+  /* RESEARCH PANELS */
+  .rp {
+    background: var(--purple-soft);
+    border: 1px solid rgba(74,53,128,0.15);
+    border-radius: var(--r-md);
+    padding: 1rem 1.25rem;
+    margin: .5rem 0 .75rem;
+    display: none;
+  }
+  .rp.open { display: block; }
+  .rp-title { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--purple-text); margin-bottom: .5rem; }
+  .rp-body { font-size: 12px; color: #3D2B60; line-height: 1.7; }
+  .rp-body b { color: var(--purple-text); }
+  .b-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: .6rem; }
+  .b-card { background: white; border: 1px solid rgba(74,53,128,0.12); border-radius: var(--r-sm); padding: .6rem .8rem; }
+  .b-name { font-size: 12px; font-weight: 600; color: var(--purple-text); margin-bottom: 2px; }
+  .b-role { font-size: 11px; color: #5A4A7A; line-height: 1.5; }
+
+  /* TEMP TRACKER */
+  .temp-alert {
+    background: var(--red-soft);
+    border: 1px solid rgba(138,42,42,0.2);
+    border-radius: var(--r-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .temp-alert-title { font-size: 13px; font-weight: 600; color: var(--red-text); margin-bottom: .3rem; }
+  .temp-alert p { font-size: 12px; color: #6B2020; line-height: 1.65; }
+  .temp-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: .75rem; }
+  .temp-entry {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: .75rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .temp-entry label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
+  .temp-input {
+    width: 100%; border: 1px solid var(--border-mid);
+    border-radius: var(--r-sm); padding: 4px 6px;
+    font-size: 13px; font-family: 'DM Mono', monospace;
+    background: var(--cream); color: var(--ink); text-align: center;
+    margin-bottom: 4px;
+  }
+  .temp-status { font-size: 11px; text-align: center; font-weight: 500; min-height: 16px; }
+  .temp-key {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: .75rem 1rem;
+    font-size: 12px; color: var(--muted); line-height: 1.8;
+    margin-bottom: .75rem;
+  }
+  .temp-key b { color: var(--ink); }
+  .add-btn {
+    font-size: 12px; font-family: 'DM Sans', sans-serif;
+    border: 1.5px dashed var(--border-mid);
+    border-radius: var(--r-sm); padding: 5px 14px;
+    background: transparent; color: var(--muted);
+    cursor: pointer; margin-bottom: 1rem;
+  }
+  .add-btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
+
+  /* PROTOCOL TAB */
+  .proto-section { margin-bottom: 1.75rem; }
+  .proto-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px; color: var(--bark);
+    border-bottom: 2px solid var(--terracotta-light);
+    padding-bottom: .4rem; margin-bottom: .75rem;
+  }
+  .proto-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 1.25rem;
+    margin-bottom: .75rem; box-shadow: var(--shadow-sm);
+  }
+  .proto-card h4 { font-size: 13px; font-weight: 600; color: var(--bark); margin-bottom: .35rem; }
+  .proto-card p { font-size: 12px; color: #5A4A40; line-height: 1.7; margin-bottom: .5rem; }
+  .proto-card p:last-child { margin-bottom: 0; }
+  .proto-card p b { color: var(--bark); }
+
+  .quote-block {
+    border-left: 4px solid var(--sage);
+    padding: .75rem 1.25rem;
+    margin-bottom: 1.25rem;
+    background: var(--sage-light);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+  }
+  .quote-block p { font-family: 'DM Serif Display', serif; font-size: 14px; color: #2A4A2C; line-height: 1.7; font-style: italic; }
+
+  .mag-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: .6rem; }
+  .mag-card {
+    background: var(--cream-dark); border: 1px solid var(--border);
+    border-radius: var(--r-sm); padding: .65rem .85rem;
+  }
+  .mag-card.highlight { background: var(--sage-light); border-color: rgba(92,122,94,0.3); }
+  .mag-name { font-size: 12px; font-weight: 600; color: var(--bark); margin-bottom: 2px; }
+  .mag-card.highlight .mag-name { color: var(--sage); }
+  .mag-use { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  .corrected-row { background: rgba(92,122,94,0.06); }
+  .corrected-badge { font-size: 9px; color: var(--sage); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* FOOTER */
+  .site-footer {
+    background: var(--bark); color: rgba(250,247,242,0.5);
+    text-align: center; padding: 1.25rem 2rem;
+    font-size: 11px; margin-top: 3rem;
+  }
+  .site-footer strong { color: rgba(250,247,242,0.8); }
+
+  @media (max-width: 640px) {
+    .stats-grid { grid-template-columns: repeat(2,1fr); }
+    .temp-grid { grid-template-columns: repeat(2,1fr); }
+    .b-grid { grid-template-columns: 1fr; }
+    .mag-grid { grid-template-columns: 1fr; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-block">
+    <div class="logo-mark">C</div>
+    <div>
+      <div class="logo-text">CuraData</div>
+      <div class="logo-sub">Functional Blood Work Decoder</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <p><strong>Think Like a Healer Initiative</strong></p>
+    <p>Girlgoneverde · Sanar AI · nasly.ai</p>
+    <p style="margin-top:2px">NLP + CV Health Intelligence Tool</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="mission-strip">
+    <strong>Mission:</strong> Healthcare systems failed underserved communities before AI existed. This decoder bridges ancestral health knowledge with functional biomarker science — making lab interpretation accessible, understandable, and actionable for everyone.
+  </div>
+
+  <div class="meta-row">
+    <label>Draw date</label><input type="date" id="drawDate">
+    <label>Lab</label><input type="text" placeholder="Quest / LabCorp / other" style="width:150px">
+    <label>Name / ID</label><input type="text" placeholder="—" style="width:130px">
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Markers entered</div><div class="stat-val" id="s0">0</div></div>
+    <div class="stat-card"><div class="stat-label">Optimal</div><div class="stat-val green" id="s1">0</div></div>
+    <div class="stat-card"><div class="stat-label">Out of range</div><div class="stat-val amber" id="s2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Priority flags</div><div class="stat-val red" id="s3">0</div></div>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="ld" style="background:var(--blue-soft);border:1px solid var(--blue-text)"></div>Low meaning</div>
+    <div class="leg"><div class="ld" style="background:var(--red-soft);border:1px solid var(--red-text)"></div>High meaning</div>
+    <div class="leg"><div class="ld" style="background:var(--green-soft);border:1px solid var(--green-text)"></div>Supplement if low</div>
+    <div class="leg"><div class="ld" style="background:var(--amber-soft);border:1px solid var(--amber-text)"></div>Supplement if high</div>
+    <div class="leg"><div class="ld" style="background:var(--purple-soft);border:1px solid var(--purple-text)"></div>Research</div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('cmp',this)">CMP</button>
+    <button class="tab-btn" onclick="showTab('cbc',this)">CBC w/ Diff</button>
+    <button class="tab-btn" onclick="showTab('thyroid',this)">Thyroid</button>
+    <button class="tab-btn" onclick="showTab('iron',this)">Iron + Temp</button>
+    <button class="tab-btn" onclick="showTab('lipid',this)">Lipid</button>
+    <button class="tab-btn" onclick="showTab('vitamind',this)">Vitamin D &amp; Minerals</button>
+    <button class="tab-btn protocol" onclick="showTab('protocol',this)">My Protocol</button>
+    <button class="tab-btn protocol" onclick="showTab('mystack',this)">My Daily Stack</button>
+  </div>
+
+  <!-- CMP -->
+  <div class="tab-panel active" id="tab-cmp">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#378ADD"></div>
+      <span class="panel-title">Comprehensive Metabolic Panel</span>
+      <span class="panel-sub">Kidney · Adrenals · Liver · Leaky gut · Blood sugar</span>
+    </div>
+
+    <div class="sec"><div class="sec-name">Kidney markers</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW → meaning + supplement</th><th style="width:23%">If HIGH → meaning + supplement</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">Albumin</span></td><td><span class="std">3.5–5.0 g/dL</span></td><td><span class="opt">4.0–5.0</span></td><td><span class="badge lm">Kidney dysfunction / low protein</span><br><span class="badge sl">KS</span></td><td><span class="badge hm">Kidney overworked / dehydration</span><br><span class="badge sh">K or KS + hydration</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">BUN</span></td><td><span class="std">7–25 mg/dL</span></td><td><span class="opt">13–18</span></td><td><span class="badge lm">Need HCl + fix leaky gut (10–12)</span><br><span class="badge sl">DS or DB12 + L Gut + Vista 1&amp;2</span></td><td><span class="badge hm">Kidney dysfunction / dehydration</span><br><span class="badge sh">K or KS</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Creatinine</span></td><td><span class="std">0.6–1.2 mg/dL</span></td><td><span class="opt">0.8–1.1</span></td><td><span class="badge lm">Kidney dysfunction</span><br><span class="badge sl">KS</span></td><td><span class="badge hm">Kidney overworked</span><br><span class="badge sh">K or KS</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Chloride</span></td><td><span class="std">98–107 mEq/L</span></td><td><span class="opt">100–106</span></td><td><span class="badge lm">Kidney dysfunction</span><br><span class="badge sl">KS + hydration</span></td><td><span class="badge hm">Acidosis</span><br><span class="badge sh">KS + alkaline diet</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table></div></div>
+
+    <div class="sec"><div class="sec-name">Adrenal / electrolytes</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">Sodium</span></td><td><span class="std">136–145</span></td><td><span class="opt">138–142</span></td><td><span class="badge lm">Hypo-adrenal (adrenal fatigue)</span><br><span class="badge sl">GA 2am/2pm</span></td><td><span class="badge hm">Hyper-adrenal / stress</span><br><span class="badge sh">GA + Calm + Cinulin</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Potassium</span></td><td><span class="std">3.5–5.1</span></td><td><span class="opt">4.0–4.5</span></td><td><span class="badge lm">Hypo-adrenal / low aldosterone</span><br><span class="badge sl">GA + PTM</span></td><td><span class="badge hm">Hyper-adrenal</span><br><span class="badge sh">GA</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">CO₂</span></td><td><span class="std">22–29</span></td><td><span class="opt">25–28</span></td><td><span class="badge lm">Acidic pH — often 20–21 chronic</span><br><span class="badge sl">21-day anti-inflammatory diet</span></td><td><span class="badge hm">Alkalosis</span><br><span class="badge sh">Diet review</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Calcium</span></td><td><span class="std">8.5–10.5</span></td><td><span class="opt">9.2–9.8</span></td><td><span class="badge lm">Low D3 — calcium is D3 proxy marker</span><br><span class="badge sl">D3 high-dose protocol</span></td><td><span class="badge hm">Excess D3 / parathyroid / low K2</span><br><span class="badge sh">Reduce D3 + add K2</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table></div></div>
+
+    <div class="sec"><div class="sec-name">Liver markers</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">Total bilirubin</span></td><td><span class="std">0.1–1.2 mg/dL</span></td><td><span class="opt">0.1–0.9</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">Liver backup / detox needed</span><br><span class="badge sh">Prep Body Brain + LS + Bind</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">AST</span></td><td><span class="std">10–40 U/L</span></td><td><span class="opt">10–26</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">Liver stress — estrogen recycles</span><br><span class="badge sh">Prep Body Brain + LS + Bind</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">ALT</span></td><td><span class="std">7–56 U/L</span></td><td><span class="opt">10–26</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">Liver dysfunction / hormone load</span><br><span class="badge sh">Prep Body Brain + LS + Bind</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">ALP</span></td><td><span class="std">44–147 U/L</span></td><td><span class="opt">70–100</span></td><td><span class="badge lm">Low zinc / B6 / hypothyroid</span><br><span class="badge sl">Minerals + thyroid protocol</span></td><td><span class="badge hm">Liver stress (not bone growth)</span><br><span class="badge sh">Prep Body Brain + LS</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table></div></div>
+
+    <div class="sec"><div class="sec-name">Blood sugar / insulin resistance</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">Fasting glucose</span></td><td><span class="std">70–99 mg/dL</span></td><td><span class="opt">85–99</span></td><td><span class="badge lm">Hypoglycemia / adrenal stress</span><br><span class="badge sl">Cinulin + GA</span></td><td><span class="badge hm">Insulin resistance / pre-diabetes</span><br><span class="badge sh">Cinulin + D3 + CVO + Catawba</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">HbA1c</span></td><td><span class="std">&lt;5.7%</span></td><td><span class="opt">&lt;5.3%</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">Chronic high glucose</span><br><span class="badge sh">Cinulin + D3 + CVO</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Uric acid</span></td><td><span class="std">2.4–7.0 mg/dL</span></td><td><span class="opt">3.5–5.9</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">🚩 Ugly lipids + high uric acid = insulin resistance (NOT gout)</span><br><span class="badge sh">Cinulin + D3 + CVO + Catawba</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="notes-wrap"><textarea placeholder="CMP notes — treatment phase 2: blood sugar + adrenals after gut is addressed…"></textarea></div>
+    </div></div>
+  </div>
+
+  <!-- CBC -->
+  <div class="tab-panel" id="tab-cbc">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#6B7280"></div>
+      <span class="panel-title">CBC with Differential</span>
+      <span class="panel-sub">Always order WITH differential — without it you're missing the full picture</span>
+    </div>
+    <div class="sec"><div class="sec-name">Anemia pattern — RBC markers</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">RBC</span></td><td><span class="std">4.2–5.9 M/µL</span></td><td><span class="opt">4.5–5.5</span></td><td><span class="badge lm">Iron deficiency anemia</span><br><span class="badge sl">Ferrex 150 + Vit C</span></td><td><span class="badge hm">B vitamin / methylation issue</span><br><span class="badge res" onclick="toggleR('methyl')">Research methylation ▾</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Hemoglobin</span></td><td><span class="std">12–17.5 g/dL</span></td><td><span class="opt">13–15 (F) / 14–17 (M)</span></td><td><span class="badge lm">Iron deficiency anemia</span><br><span class="badge sl">Ferrex 150 + Vit C daily</span></td><td><span class="badge hm">Dehydration / polycythemia</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">MCV</span></td><td><span class="std">80–100 fL</span></td><td><span class="opt">85–95</span></td><td><span class="badge lm">Iron deficiency (small cells)</span><br><span class="badge sl">Ferrex 150 + Vit C</span></td><td><span class="badge hm">B12/folate deficiency (large cells)</span><br><span class="badge res" onclick="toggleR('bvits')">Research B vitamins ▾</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">MCH</span></td><td><span class="std">27–33 pg</span></td><td><span class="opt">28–32</span></td><td><span class="badge lm">Iron deficiency</span><br><span class="badge sl">Ferrex 150 + Vit C</span></td><td><span class="badge hm">B12/folate/methylation</span><br><span class="badge res" onclick="toggleR('methyl')">Research methylation ▾</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Platelets</span></td><td><span class="std">150–400 K/µL</span></td><td><span class="opt">175–350</span></td><td><span class="badge lm">Bleeding risk / B12/folate</span><br><span class="badge res" onclick="toggleR('bvits')">Research B vitamins ▾</span></td><td><span class="badge hm">Inflammation / clotting risk</span><br><span class="badge sh">Anti-inflammatory diet + CVO</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="rp" id="rp-methyl">
+      <div class="rp-title">What is methylation?</div>
+      <div class="rp-body">
+        <p><b>Methylation</b> is a biochemical process that happens over a billion times per second in every cell. It acts as an on/off switch for gene expression, detox, hormone metabolism, and brain chemistry by adding a methyl group (one carbon + three hydrogens) to DNA and proteins.</p>
+        <p style="margin-top:.5rem"><b>Why it matters for labs:</b> When RBC, MCV, or MCH are elevated, it often signals B vitamins aren't being properly utilized — a methylation failure, not a deficiency. The body has the vitamin but can't convert it to its active usable form.</p>
+        <p style="margin-top:.5rem"><b>MTHFR gene mutation</b> is the most common cause — it reduces folate conversion by 30–70%. Standard folic acid in most supplements is essentially useless for those affected. The C677T and A1298C variants are most common.</p>
+        <p style="margin-top:.5rem"><b>Signs of poor methylation:</b> fatigue, brain fog, depression, anxiety, high homocysteine, elevated MCV/MCH, poor detox, chemical sensitivities, recurrent pregnancy loss.</p>
+        <p style="margin-top:.5rem"><b>What supports methylation:</b> methylated B12 (methylcobalamin), methylated folate (5-MTHF), B6 (P5P form), riboflavin (B2), magnesium, zinc. Test for MTHFR via 23andMe or dedicated genetic panels.</p>
+      </div>
+    </div>
+    <div class="rp" id="rp-bvits">
+      <div class="rp-title">The 8 recognized B vitamins — what each one does</div>
+      <div class="rp-body">
+        <p style="margin-bottom:.5rem">The B vitamin family was originally numbered 1–16 but several were retired when researchers discovered they weren't essential vitamins. The 8 currently recognized:</p>
+        <div class="b-grid">
+          <div class="b-card"><div class="b-name">B1 — Thiamine</div><div class="b-role">Energy from carbohydrates. Critical for nerve and brain function. Depleted by alcohol and refined carbs.</div></div>
+          <div class="b-card"><div class="b-name">B2 — Riboflavin</div><div class="b-role">Required for MTHFR enzyme function — critical for methylation. Deficiency shows as cracked lips, light sensitivity, fatigue.</div></div>
+          <div class="b-card"><div class="b-name">B3 — Niacin</div><div class="b-role">NAD+ production for energy and DNA repair. Known to raise HDL cholesterol. High-dose causes a harmless "flush."</div></div>
+          <div class="b-card"><div class="b-name">B5 — Pantothenic acid</div><div class="b-role">Coenzyme A for fat/carb metabolism. Supports adrenal cortisol production — the "anti-stress vitamin."</div></div>
+          <div class="b-card"><div class="b-name">B6 — Pyridoxine (P5P)</div><div class="b-role">100+ enzyme reactions including serotonin, dopamine, GABA synthesis. Essential for hemoglobin. P5P is the active form.</div></div>
+          <div class="b-card"><div class="b-name">B7 — Biotin</div><div class="b-role">Hair, skin, nails, glucose metabolism. <b>High-dose biotin (5mg+) falsely skews thyroid/hormone labs</b> — stop 72hrs before any draw.</div></div>
+          <div class="b-card"><div class="b-name">B9 — Folate (5-MTHF)</div><div class="b-role">DNA synthesis, red blood cells, methylation. <b>Folic acid ≠ folate</b> — requires MTHFR conversion. Large red cells = folate/B12 issue.</div></div>
+          <div class="b-card"><div class="b-name">B12 — Cobalamin (methylcobalamin)</div><div class="b-role">Nerve myelin, DNA synthesis, methylation cycle. Vegans and low stomach acid = highest risk. <b>Sublingual or methylcobalamin bypasses absorption issues.</b></div></div>
+        </div>
+        <p style="margin-top:.6rem;font-size:10.5px;color:#5A4A7A">Retired numbers: B4 (adenine), B8 (inositol), B10 (PABA), B11, B13, B15, B16, B17 — removed as they didn't meet criteria of essential human vitamins.</p>
+      </div>
+    </div>
+    </div></div>
+
+    <div class="sec"><div class="sec-name">Differential — immune pattern</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">WBC</span></td><td><span class="std">4.5–11.0</span></td><td><span class="opt">5.0–8.0</span></td><td><span class="badge lm">Immune suppression</span><br><span class="badge sl">Gold + Vivi + D3</span></td><td><span class="badge hm">Low-grade infection — go to differential</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Neutrophils</span></td><td><span class="std">50–70%</span></td><td><span class="opt">~60% (bacteria)</span></td><td><span class="badge lm">Viral more likely</span><br><span class="badge sl">Vivi 3/day x10d → 1/day x30d</span></td><td><span class="badge hm">&gt;73% = bacterial infection</span><br><span class="badge sh">Bactrex 2 AM / 2 PM</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Lymphocytes</span></td><td><span class="std">20–40%</span></td><td><span class="opt">~30% (2:1 ratio)</span></td><td><span class="badge lm">Immune depletion</span><br><span class="badge sl">Gold + Vivi + D3</span></td><td><span class="badge hm">1:1 ratio = active autoimmune flare</span><br><span class="badge sh">Vivi + GA + anti-inflammatory</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Monocytes</span></td><td><span class="std">2–8%</span></td><td><span class="opt">&lt;8%</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">🚩 ≥10% = EBV / chronic fatigue (ever had mono?)</span><br><span class="badge sh">Vivi 3/day x10d → 1/day x30d</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Eosinophils</span></td><td><span class="std">1–4%</span></td><td><span class="opt">&lt;3%</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">🚩 &gt;3% = food allergies AND/OR parasites</span><br><span class="badge sh">VRMs 1&amp;3 AM / 2&amp;4 PM + WO + Bind (10on/5off x4)</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="notes-wrap"><textarea placeholder="CBC notes — 2:1 neutrophil:lymphocyte = no active flare | 1:1 = active autoimmune | Eosinophils >3% = gut destroy | Monocytes ≥10% = EBV…"></textarea></div>
+    </div></div>
+  </div>
+
+  <!-- THYROID -->
+  <div class="tab-panel" id="tab-thyroid">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#7F77DD"></div>
+      <span class="panel-title">Thyroid Panel</span>
+      <span class="panel-sub">Fix adrenals → pituitary → thyroid in order (GA → GB → GF)</span>
+    </div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">TSH</span></td><td><span class="std">0.4–4.5</span></td><td><span class="opt">1.0–2.0</span></td><td><span class="badge lm">Hyperthyroid / overmedicated</span><br><span class="badge sl">Review meds — GA + GF</span></td><td><span class="badge hm">Hypothyroid — thyroid struggling</span><br><span class="badge sh">GA + GB + GF 2am/2pm | CX topicals</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Free T4</span></td><td><span class="std">0.8–1.8 ng/dL</span></td><td><span class="opt">1.1–1.7</span></td><td><span class="badge lm">Hypothyroid / poor T4 raw material</span><br><span class="badge sl">GA + GB + GF + CX-GA/CX-GF topical</span></td><td><span class="badge hm">Hyperthyroid / overmedicated</span><br><span class="badge sh">Review dosing</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Free T3</span></td><td><span class="std">2.3–4.2 pg/mL</span></td><td><span class="opt">3.0–4.0 (upper half)</span></td><td><span class="badge lm">🚩 Poor T4→T3 conversion — iron + selenium + zinc depleted</span><br><span class="badge sl">GA + GF + Selenium 200mcg + Zinc + iron protocol</span></td><td><span class="badge hm">Hyperthyroid</span><br><span class="badge sh">Review meds</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Reverse T3</span></td><td><span class="std">9–24 ng/dL</span></td><td><span class="opt">&lt;15</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">🚩 Conversion block — cortisol / iron depleted</span><br><span class="badge sh">GA + iron protocol + Selenium 200mcg</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">TPO antibodies</span></td><td><span class="std">&lt;35 IU/mL</span></td><td><span class="opt">&lt;15</span></td><td><span class="badge lm">Good — no autoimmune attack</span></td><td><span class="badge hm">🚩 Hashimoto's — check neutrophil:lymphocyte ratio</span><br><span class="badge sh">GA + GF + anti-inflammatory + Selenium + gut</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="notes-wrap"><textarea placeholder="Thyroid: GA + GB + GF 2am/2pm | CX-GA lower back / CX-GF over thyroid 10 drops AM+PM | Selenium 200mcg + Zinc | Space iron 4hrs from thyroid meds…"></textarea></div>
+    </div>
+  </div>
+
+  <!-- IRON + TEMP -->
+  <div class="tab-panel" id="tab-iron">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#D4537E"></div>
+      <span class="panel-title">Iron Panel + Body Temperature Tracker</span>
+    </div>
+
+    <div class="temp-alert">
+      <div class="temp-alert-title">🌡 Thyroid → Iron Transport Connection</div>
+      <p>When thyroid function is low, <b>body temperature drops below 98.6°F (37°C)</b>. Transferrin — the protein that transports iron through the blood — requires adequate body temperature and thyroid hormone activity to function. A cold, hypothyroid body physically cannot move iron efficiently, even when iron levels appear sufficient on labs. This is why many people with hypothyroidism remain iron deficient despite supplementing.</p>
+      <p style="margin-top:.4rem"><b>Target waking temp: 97.8–98.6°F. Below 97.8°F = suspect thyroid/adrenal issue affecting iron transport. Fix thyroid first or iron won't move.</b></p>
+    </div>
+
+    <div class="sec"><div class="sec-name">Daily waking temperature log — take before getting out of bed</div>
+    <div class="temp-grid" id="tempGrid">
+      <div class="temp-entry"><label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" min="95" max="102" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div></div>
+      <div class="temp-entry"><label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div></div>
+      <div class="temp-entry"><label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div></div>
+      <div class="temp-entry"><label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div></div>
+      <div class="temp-entry"><label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div></div>
+      <div class="temp-entry"><label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div></div>
+    </div>
+    <button class="add-btn" onclick="addTempRow()">+ Add more days</button>
+    <div class="temp-key">
+      <b>Reading your temperature:</b><br>
+      98.6°F+ → Optimal thyroid/adrenal — iron transport working well<br>
+      97.8–98.5°F → Mild hypothyroid signal — monitor iron transport + thyroid panel<br>
+      &lt;97.8°F → 🚩 Significant thyroid suppression — iron transport likely impaired<br>
+      &lt;97.0°F → 🚩🚩 Severe suppression — address thyroid before expecting iron to respond
+    </div>
+    </div>
+
+    <div class="sec"><div class="sec-name">Iron markers</div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">Serum iron</span></td><td><span class="std">60–170 µg/dL</span></td><td><span class="opt">85–130</span></td><td><span class="badge lm">Iron deficiency — confirm ferritin + %Tsat</span><br><span class="badge sl">Ferrex 150 + Vit C daily</span></td><td><span class="badge hm">Over-supplementing — check %Tsat</span><br><span class="badge sh">Pause iron — monitor</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Ferritin</span></td><td><span class="std">12–300(M)/12–150(F) ng/mL</span></td><td><span class="opt">50–150</span></td><td><span class="badge lm">🚩 Storage depleted — fatigue, hair loss, brain fog | If thyroid low, iron won't transport</span><br><span class="badge sl">Ferrex 150 + Vit C | 4hrs from thyroid meds | Separate from mag</span></td><td><span class="badge hm">Inflammation (falsely elevated) / overload</span><br><span class="badge sh">Check %Tsat — if &gt;70% stop iron immediately</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">TIBC</span></td><td><span class="std">250–370 µg/dL</span></td><td><span class="opt">250–350</span></td><td><span class="badge lm">Inflammation / iron overload</span><br><span class="badge sl">Pause iron — check %Tsat</span></td><td><span class="badge hm">🚩 Body hunting for iron — deficiency confirmed</span><br><span class="badge sh">Ferrex 150 + Vit C daily</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">% Transferrin sat</span></td><td><span class="std">15–50%</span></td><td><span class="opt">25–45%</span></td><td><span class="badge lm">Iron deficiency — transferrin empty</span><br><span class="badge sl">Ferrex 150 + Vit C daily</span></td><td><span class="badge hm">🚩 ≥70% = iron overload — unbound iron deposits in organs</span><br><span class="badge sh">Stop iron immediately — retest in 30 days</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="notes-wrap"><textarea placeholder="Iron notes: Ferrex 150 + Vit C daily | 4hrs from thyroid meds | Separate from magnesium | Watch %Tsat >70% = stop iron | Body temp &lt;97.8°F = fix thyroid first…"></textarea></div>
+    </div></div>
+  </div>
+
+  <!-- LIPID -->
+  <div class="tab-panel" id="tab-lipid">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#E24B4A"></div>
+      <span class="panel-title">Lipid Panel</span>
+      <span class="panel-sub">Ugly pattern + high uric acid = insulin resistance, not a statin problem</span>
+    </div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr class="corrected-row"><td><span class="mn">Total cholesterol</span><br><span class="corrected-badge">✓ corrected</span></td><td><span class="std">Standard &lt;200 mg/dL</span></td><td><span class="opt">&gt;200 (functional)</span></td><td><span class="badge lm">🚩 &lt;200 = hormone production failing — cholesterol is raw material for ALL sex hormones + cortisol</span><br><span class="badge sl">CVO + RPM + Vista 1&amp;2</span></td><td><span class="badge hm">Check insulin resistance pattern first</span><br><span class="badge sh">Heart support + CVO + Cinulin if IR present</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">LDL</span></td><td><span class="std">&lt;130 mg/dL</span></td><td><span class="opt">&lt;100</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">🚩 High TG + high uric acid = insulin resistance (NOT statins)</span><br><span class="badge sh">Cinulin + D3 + CVO + Catawba</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">HDL</span></td><td><span class="std">&gt;40 mg/dL</span></td><td><span class="opt">&gt;60 protective</span></td><td><span class="badge lm">🚩 Low HDL + high TG + high uric acid = classic IR</span><br><span class="badge sl">Cinulin + CVO + D3 + GA + L Gut</span></td><td><span class="badge hm">Protective — good sign</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Triglycerides</span></td><td><span class="std">&lt;150 mg/dL</span></td><td><span class="opt">&lt;80</span></td><td><span class="badge lm">Usually not significant</span></td><td><span class="badge hm">🚩 Insulin resistance / sugar metabolism</span><br><span class="badge sh">Cinulin + CVO + D3 + Catawba</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="notes-wrap"><textarea placeholder="IR pattern: high glucose + high TG + high LDL + high cholesterol + high uric acid + low HDL → Cinulin + D3 + CVO + Catawba + GA + L Gut…"></textarea></div>
+    </div>
+  </div>
+
+  <!-- VITAMIN D & MINERALS -->
+  <div class="tab-panel" id="tab-vitamind">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#EF9F27"></div>
+      <span class="panel-title">Vitamin D &amp; Minerals</span>
+      <span class="panel-sub">D3 · Calcium · Magnesium · Zinc · Selenium · B12 · Folate</span>
+    </div>
+    <div class="tcard"><table>
+      <tr><th style="width:14%">Marker</th><th style="width:11%">Standard</th><th style="width:11%">Optimal</th><th style="width:23%">If LOW</th><th style="width:23%">If HIGH</th><th style="width:10%">Value</th><th style="width:8%">Status</th></tr>
+      <tr><td><span class="mn">25-OH Vitamin D</span></td><td><span class="std">30–100 ng/mL</span></td><td><span class="opt">60–100 (target 80)</span></td><td><span class="badge lm">🚩 Immune, hormone, mood, calcium all impacted</span><br><span class="badge sl">See My Protocol tab for full D3 schedule</span></td><td><span class="badge hm">Monitor — ensure K2 on board</span><br><span class="badge sh">MK-4 daytime / MK-7 nighttime | Reduce if calcium high</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Calcium</span></td><td><span class="std">8.5–10.5 mg/dL</span></td><td><span class="opt">9.2–9.8</span></td><td><span class="badge lm">Low D3 — calcium is D3 proxy marker</span><br><span class="badge sl">D3 high-dose protocol</span></td><td><span class="badge hm">Excess D3 / parathyroid / too little K2</span><br><span class="badge sh">Reduce D3 + MK-4 + MK-7</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Magnesium</span></td><td><span class="std">1.7–2.3 mg/dL</span></td><td><span class="opt">2.0–2.5</span></td><td><span class="badge lm">🚩 D3 activation blocked / poor sleep / cramps</span><br><span class="badge sl">See My Protocol tab — LE ZümXR is what I personally take</span></td><td><span class="badge hm">Over-supplementing / kidney clearance</span><br><span class="badge sh">Reduce — check kidney markers</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Zinc</span></td><td><span class="std">60–120 µg/dL</span></td><td><span class="opt">90–120</span></td><td><span class="badge lm">🚩 Thyroid conversion impaired / ALP low / white lines on nails</span><br><span class="badge sl">Minerals/PTM 2/day | Check thyroid blend zinc</span></td><td><span class="badge hm">Copper depletion risk</span><br><span class="badge sh">Reduce + add copper foods</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Selenium</span></td><td><span class="std">70–150 µg/L</span></td><td><span class="opt">120–150</span></td><td><span class="badge lm">🚩 T4→T3 conversion impaired</span><br><span class="badge sl">Selenium 200mcg/day</span></td><td><span class="badge hm">Toxicity &gt;400 µg/day</span><br><span class="badge sh">Reduce — max 400mcg total all sources</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Vitamin B12</span></td><td><span class="std">200–900 pg/mL</span></td><td><span class="opt">600–900</span></td><td><span class="badge lm">🚩 Methylation / leaky gut / B vitamin pattern</span><br><span class="badge res" onclick="toggleR('methyl')">Research methylation ▾</span></td><td><span class="badge hm">Usually benign if supplementing</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+      <tr><td><span class="mn">Folate / B9</span></td><td><span class="std">&gt;4 ng/mL</span></td><td><span class="opt">&gt;10</span></td><td><span class="badge lm">Methylation / large red cells — check MTHFR</span><br><span class="badge res" onclick="toggleR('bvits')">Research B vitamins ▾</span></td><td><span class="badge hm">Usually benign</span></td><td><input class="val-in" type="text" placeholder="—" oninput="upd()"></td><td><select class="stat-sel" onchange="ss(this);upd()"><option value="na">—</option><option value="opt">Optimal</option><option value="low">Low</option><option value="high">High</option></select></td></tr>
+    </table>
+    <div class="notes-wrap"><textarea placeholder="Vitamin D: MK-4 daytime / MK-7 nighttime | Mag separate from iron | White lines on nails = zinc deficiency | Selenium 200mcg for thyroid conversion…"></textarea></div>
+    </div>
+  </div>
+
+  <!-- MY PROTOCOL -->
+  <div class="tab-panel" id="tab-protocol">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#5C7A5E"></div>
+      <span class="panel-title">My High-Dose Protocol</span>
+    </div>
+
+    <div class="quote-block">
+      <p>"I had been deficient for a long time and had to rebuild through a high-dose model. Once I committed to the protocol and stayed consistent, I felt so much better. This is the approach that worked for me — building the foundation my body had been missing for years."</p>
+    </div>
+
+    <div class="proto-section">
+      <div class="proto-section-title">Vitamin D3 — High-Dose Rebuild Protocol</div>
+      <div class="proto-card">
+        <h4>Why high-dose D3?</h4>
+        <p>Standard dosing (2,000–5,000 IU/day) is insufficient when you've been deficient for years. D3 stores are depleted across fat tissue, bones, and organs — not just blood. Most people don't see meaningful improvement until they reach 60–80 ng/mL. The Bowles protocol uses high-dose D3 with cofactors to safely achieve and maintain optimal levels.</p>
+        <h4>My schedule</h4>
+        <p><b>Month 1:</b> 25,000 IU/day — 5 capsules or 8 droppers<br>
+        <b>Month 2:</b> 20,000 IU/day<br>
+        <b>Month 3:</b> 15,000 IU/day<br>
+        <b>Maintenance:</b> 10,000–15,000 IU/day ongoing<br>
+        Standard dosing of 2,000–5,000 IU will not move the needle when truly depleted.</p>
+        <h4>Critical cofactors — always pair with D3</h4>
+        <p><b>MK-4 (K2) — daytime:</b> Short half-life (~4 hrs). Take with D3. Directs calcium away from soft tissues into bones. Must dose multiple times daily.<br>
+        <b>MK-7 (K2) — nighttime:</b> Long half-life (up to 72 hrs). Provides overnight and continuous coverage. Life Extension K2VITAL or BestVite K2VITAL — these are what I personally take.<br>
+        <b>Magnesium:</b> Required to activate D3. Without it, D3 cannot convert to calcitriol — this is why some people supplement for years with no improvement.<br>
+        <b>Check labels:</b> Some D3 supplements already contain K2. Verify before adding additional K2.</p>
+      </div>
+    </div>
+
+    <div class="proto-section">
+      <div class="proto-section-title">Magnesium — Types, Uses &amp; My Recommendation</div>
+      <div class="proto-card">
+        <h4>Why magnesium matters</h4>
+        <p>Magnesium is involved in over 300 enzymatic reactions including D3 activation, ATP production, nerve function, and blood sugar regulation. Serum magnesium is a poor marker — only 1% of body magnesium is in blood. RBC magnesium is more accurate. Most people are severely intracellular-depleted with a "normal" serum level.</p>
+        <div class="mag-grid">
+          <div class="mag-card highlight"><div class="mag-name">Magnesium glycinate (bisglycinate) ✓ Research-supported foundation</div><div class="mag-use">Highly bioavailable. Gentle on gut. Best for replenishing deficiency, anxiety, sleep, muscle recovery. Glycine supports liver detox and calming neurotransmitters.</div></div>
+          <div class="mag-card highlight"><div class="mag-name">Life Extension ZümXR Extended Release ✓ What I personally take</div><div class="mag-use">Slow-release bisglycinate technology. Releases over 8+ hours — prevents the loose stool side effect and maintains steady levels. What I personally use for long-term replenishment. Always consult your healthcare provider to find what works best for you.</div></div>
+          <div class="mag-card"><div class="mag-name">Magnesium citrate</div><div class="mag-use">Good absorption. Mild laxative effect at higher doses. Useful for constipation. Not ideal for high-dose daily use.</div></div>
+          <div class="mag-card"><div class="mag-name">Magnesium malate</div><div class="mag-use">Supports energy (Krebs cycle). Good for fibromyalgia, chronic fatigue, muscle pain. Gentle on gut. Take earlier in the day.</div></div>
+          <div class="mag-card"><div class="mag-name">Magnesium threonate</div><div class="mag-use">Crosses the blood-brain barrier. Best for cognitive function and memory. Research shows it increases brain magnesium where other forms cannot reach.</div></div>
+          <div class="mag-card"><div class="mag-name">Magnesium taurate</div><div class="mag-use">Excellent for cardiovascular health, blood pressure, heart rhythm, and glucose metabolism.</div></div>
+          <div class="mag-card"><div class="mag-name">Magnesium oxide</div><div class="mag-use">Less than 5% bioavailability. Mostly a laxative. Common in cheap supplements. Avoid as a daily magnesium source.</div></div>
+          <div class="mag-card"><div class="mag-name">Magnesium chloride (topical)</div><div class="mag-use">Applied to skin as oil or lotion. Bypasses gut. Good for localized muscle cramps and those who can't absorb oral forms.</div></div>
+        </div>
+        <p style="margin-top:.75rem;font-size:11.5px;color:var(--red-text)"><b>Important:</b> Always separate magnesium from iron by at least 2 hours — magnesium competes with iron for absorption.</p>
+      </div>
+    </div>
+
+    <div class="proto-section">
+      <div class="proto-section-title">Iron — Long-Term Deficiency Rebuild</div>
+      <div class="proto-card">
+        <h4>When you've been deficient for years</h4>
+        <p>Long-term deficiency depletes ferritin stores — these can take 6–12 months to fully rebuild even with consistent supplementation. The body's ability to transport iron is also compromised when thyroid function is low. Address thyroid in parallel — iron will not move in a cold body.</p>
+        <h4>My iron protocol</h4>
+        <p><b>Ferrex 150</b> daily — high-potency iron<br>
+        <b>Vitamin C</b> with every iron dose — inhibits hepcidin and significantly increases uptake<br>
+        <b>Spacing:</b> 4 hours from thyroid medications | 2+ hours from magnesium | Avoid calcium-rich foods and antacids<br>
+        <b>Monitor:</b> %Transferrin saturation at every draw — if ≥70% stop iron immediately, retest in 30 days</p>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div class="sec-name">Personal notes</div>
+      <div class="tcard" style="padding:1rem">
+        <textarea style="width:100%;font-size:13px;font-family:'DM Sans',sans-serif;border:1px solid var(--border-mid);border-radius:var(--r-md);padding:10px;min-height:80px;resize:vertical;background:var(--cream);color:var(--ink)" placeholder="Protocol updates, how you're feeling, dose adjustments, next lab date…"></textarea>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MY DAILY STACK -->
+  <div class="tab-panel" id="tab-mystack">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:#C4622D"></div>
+      <span class="panel-title">My Personal Daily Stack</span>
+    </div>
+
+    <div class="mission-strip" style="margin-bottom:1.25rem">
+      <strong>Personal experience only.</strong> This documents what I personally take as part of my own health journey following the Bowles high-dose D3 protocol and functional medicine principles. This is <strong>not medical advice</strong> and should not be replicated without consulting a qualified healthcare provider. DHEA and Pregnenolone are hormonal precursors — these especially require provider guidance.
+    </div>
+
+    <!-- MORNING -->
+    <div class="proto-section">
+      <div class="proto-section-title" style="color:var(--terracotta-dark)">Morning — with first meal (midday)</div>
+      <div class="tcard">
+        <table>
+          <tr>
+            <th style="width:22%">Supplement</th>
+            <th style="width:12%">My dose</th>
+            <th style="width:22%">Why I take it</th>
+            <th style="width:22%">Important notes</th>
+            <th style="width:12%">Taken today</th>
+            <th style="width:10%">Notes</th>
+          </tr>
+          <tr>
+            <td><span class="mn">Vitamin D3</span><br><span class="std">Bowles high-dose protocol</span></td>
+            <td><span class="opt">Currently testing high-dose per Bowles research</span></td>
+            <td><span class="badge lm">Was severely deficient for years — rebuilding stores across fat tissue, bones, organs</span></td>
+            <td><span class="badge sh">Always taken with MK-4 K2 + magnesium | Check calcium at every draw</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">MK-4 (Vitamin K2)</span><br><span class="std">Short half-life form</span></td>
+            <td><span class="opt">With D3 dose</span></td>
+            <td><span class="badge lm">Directs calcium away from soft tissues into bones — essential when taking high-dose D3</span></td>
+            <td><span class="badge sh">MK-4 daytime only — short half-life ~4hrs | MK-7 handles nighttime coverage</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Magnesium</span><br><span class="std">LE ZümXR extended release</span></td>
+            <td><span class="opt">Per label</span></td>
+            <td><span class="badge lm">Required to activate D3 — without it D3 cannot convert to calcitriol. Also supports sleep, muscle, energy</span></td>
+            <td><span class="badge sh">Space at least 2hrs from iron | Bisglycinate form — gentle on gut, slow release</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Selenium</span></td>
+            <td><span class="opt">200mcg</span></td>
+            <td><span class="badge lm">Supports T4→T3 thyroid conversion — was deficient. Critical for thyroid function and immune health</span></td>
+            <td><span class="badge sh">Do not exceed 400mcg total from all sources | Check thyroid blend for selenium content</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Thyroid blend</span><br><span class="std">Contains zinc</span></td>
+            <td><span class="opt">Per label</span></td>
+            <td><span class="badge lm">Supporting thyroid function — monitoring zinc levels as blend may not provide sufficient zinc dose</span></td>
+            <td><span class="badge sh">Space 4hrs from iron | Check zinc content — may need additional standalone zinc</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">DHEA</span><br><span class="std" style="color:var(--terracotta-dark)">Hormonal precursor ⚠</span></td>
+            <td><span class="opt">50mg</span></td>
+            <td><span class="badge lm">Adrenal + hormone support — DHEA declines with age and chronic stress. Part of my personal hormone support protocol</span></td>
+            <td><span class="badge sh">Hormonal precursor — provider guidance strongly advised before anyone else considers this | Monitor DHEA-S levels on labs</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Pregnenolone</span><br><span class="std" style="color:var(--terracotta-dark)">Hormonal precursor ⚠</span></td>
+            <td><span class="opt">80mg</span></td>
+            <td><span class="badge lm">Master hormone precursor — converts to DHEA, progesterone, cortisol. Supports brain function, memory, mood, and adrenal health</span></td>
+            <td><span class="badge sh">Hormonal precursor — provider guidance strongly advised | Can affect downstream hormones. Monitor via labs</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- MIDDAY / SPACED -->
+    <div class="proto-section">
+      <div class="proto-section-title" style="color:var(--bark-mid)">Mid-morning — spaced from first meal (iron protocol)</div>
+      <div class="tcard">
+        <table>
+          <tr>
+            <th style="width:22%">Supplement</th>
+            <th style="width:12%">My dose</th>
+            <th style="width:22%">Why I take it</th>
+            <th style="width:22%">Important notes</th>
+            <th style="width:12%">Taken today</th>
+            <th style="width:10%">Notes</th>
+          </tr>
+          <tr>
+            <td><span class="mn">Ferrex 150</span><br><span class="std">Iron protocol</span></td>
+            <td><span class="opt">Per label</span></td>
+            <td><span class="badge lm">Was severely iron deficient for years — rebuilding ferritin stores. Long-term deficiency depletes storage not just serum iron</span></td>
+            <td><span class="badge sh">Space 4hrs from thyroid meds | Always take with Vit C | Separate from magnesium by 2hrs | Watch %Tsat at every draw</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Vitamin C</span><br><span class="std">With iron — always</span></td>
+            <td><span class="opt">With Ferrex dose</span></td>
+            <td><span class="badge lm">Inhibits hepcidin — the hormone that blocks iron absorption. Significantly increases iron uptake</span></td>
+            <td><span class="badge sh">Always taken same time as Ferrex 150 — never skip this pairing</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- EVENING -->
+    <div class="proto-section">
+      <div class="proto-section-title" style="color:var(--sage)">Evening — with second meal</div>
+      <div class="tcard">
+        <table>
+          <tr>
+            <th style="width:22%">Supplement</th>
+            <th style="width:12%">My dose</th>
+            <th style="width:22%">Why I take it</th>
+            <th style="width:22%">Important notes</th>
+            <th style="width:12%">Taken today</th>
+            <th style="width:10%">Notes</th>
+          </tr>
+          <tr>
+            <td><span class="mn">MK-7 (Vitamin K2)</span><br><span class="std">Long half-life form — nighttime</span></td>
+            <td><span class="opt">Per label</span></td>
+            <td><span class="badge lm">Long half-life (up to 72hrs) — provides continuous overnight K2 coverage when taking high-dose D3. Prevents calcium from depositing in soft tissues</span></td>
+            <td><span class="badge sh">Nighttime only — MK-4 handles daytime | Life Extension K2VITAL or BestVite K2VITAL — what I personally take</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Magnesium</span><br><span class="std">LE ZümXR — second dose</span></td>
+            <td><span class="opt">Per label</span></td>
+            <td><span class="badge lm">Evening dose supports sleep quality, muscle relaxation, and overnight D3 activation. Extended release maintains steady levels through the night</span></td>
+            <td><span class="badge sh">Space 2hrs from iron | Slow release — no need to split further</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">GA (adrenal support)</span></td>
+            <td><span class="opt">2 capsules</span></td>
+            <td><span class="badge lm">Lowers cortisol — part of sleep protocol. Cortisol must come down for GABA to take over and allow sleep onset</span></td>
+            <td><span class="badge sh">Sleep combo: GA + Cinulin + Calm — take together before bed | Can increase to 4 if needed</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Cinulin (blood sugar support)</span></td>
+            <td><span class="opt">2 capsules</span></td>
+            <td><span class="badge lm">Balances blood sugar overnight — blood sugar spikes during sleep wake the body. Cinulin + GA work together for uninterrupted sleep</span></td>
+            <td><span class="badge sh">Sleep combo with GA + Calm | Blood sugar and cortisol go hand in hand — both must be addressed</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+          <tr>
+            <td><span class="mn">Calm (GABA support)</span></td>
+            <td><span class="opt">2 capsules</span></td>
+            <td><span class="badge lm">GABA is the neurotransmitter that signals the brain to sleep. When cortisol and blood sugar are elevated, GABA cannot take over — Calm fills that gap</span></td>
+            <td><span class="badge sh">Do NOT combine with SSRIs/antidepressants | Sleep combo: GA + Cinulin + Calm — 2–4 of each before bed</span></td>
+            <td><input type="checkbox" style="width:20px;height:20px;cursor:pointer;accent-color:var(--terracotta)"></td>
+            <td><input class="val-in" type="text" placeholder="notes…"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- SPACING RULES -->
+    <div class="proto-section">
+      <div class="proto-section-title">Critical spacing rules I follow</div>
+      <div class="proto-card">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <div style="background:var(--red-soft);border-radius:var(--r-md);padding:.75rem 1rem;border:1px solid rgba(138,42,42,0.15)">
+            <div style="font-size:12px;font-weight:600;color:var(--red-text);margin-bottom:.4rem">Iron spacing rules</div>
+            <div style="font-size:11px;color:#6B2020;line-height:1.7">
+              ✗ Never with thyroid meds — space 4 hours<br>
+              ✗ Never with magnesium — space 2 hours<br>
+              ✗ Never with calcium-rich foods or antacids<br>
+              ✓ Always with Vitamin C — same dose, every time<br>
+              ✓ Monitor %Tsat at every single blood draw
+            </div>
+          </div>
+          <div style="background:var(--blue-soft);border-radius:var(--r-md);padding:.75rem 1rem;border:1px solid rgba(44,95,138,0.15)">
+            <div style="font-size:12px;font-weight:600;color:var(--blue-text);margin-bottom:.4rem">D3 + K2 rules</div>
+            <div style="font-size:11px;color:#1E3D5A;line-height:1.7">
+              ✓ MK-4 taken with D3 during the day<br>
+              ✓ MK-7 taken at night — covers overnight<br>
+              ✓ Magnesium always paired — activates D3<br>
+              ✗ Never take D3 without K2 — calcium risk<br>
+              ✓ Check label — some D3 already has K2
+            </div>
+          </div>
+          <div style="background:var(--green-soft);border-radius:var(--r-md);padding:.75rem 1rem;border:1px solid rgba(42,107,53,0.15)">
+            <div style="font-size:12px;font-weight:600;color:var(--green-text);margin-bottom:.4rem">Sleep protocol rules</div>
+            <div style="font-size:11px;color:#1A4A22;line-height:1.7">
+              ✓ GA + Cinulin + Calm — taken together before bed<br>
+              ✓ Start at 2 each — go up to 4 each if needed<br>
+              ✗ Calm NOT compatible with SSRIs<br>
+              ✓ GA lowers cortisol | Cinulin steadies blood sugar<br>
+              ✓ Calm adds GABA — all 3 work as a system
+            </div>
+          </div>
+          <div style="background:var(--amber-soft);border-radius:var(--r-md);padding:.75rem 1rem;border:1px solid rgba(138,92,0,0.15)">
+            <div style="font-size:12px;font-weight:600;color:var(--amber-text);margin-bottom:.4rem">Hormone precursor rules</div>
+            <div style="font-size:11px;color:#5A3A00;line-height:1.7">
+              ⚠ DHEA + Pregnenolone = hormonal precursors<br>
+              ⚠ These are what I personally take — not general advice<br>
+              ✓ Monitor via DHEA-S labs at every draw<br>
+              ✓ Take in the morning — mirrors natural cortisol curve<br>
+              ✗ Do not self-prescribe without provider guidance
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY NOTES -->
+    <div class="proto-section">
+      <div class="proto-section-title">Daily journal</div>
+      <div class="tcard" style="padding:1rem">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:.75rem">
+          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px">Date</label><input type="date" class="val-in"></div>
+          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px">Waking temp °F</label><input type="number" step="0.1" placeholder="98.6" class="val-in" oninput="checkTempStack(this)"><div id="stackTempStatus" style="font-size:11px;margin-top:2px"></div></div>
+          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px">Energy level (1–10)</label><input type="number" min="1" max="10" placeholder="—" class="val-in"></div>
+        </div>
+        <textarea style="width:100%;font-size:12px;font-family:'DM Sans',sans-serif;border:1px solid var(--border-mid);border-radius:var(--r-md);padding:10px;min-height:70px;resize:vertical;background:var(--cream);color:var(--ink)" placeholder="How I feel today, any reactions, symptoms improving, anything to flag for next lab draw…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERALL NOTES -->
+  <div style="margin-top:2rem">
+    <div class="sec-name">Overall clinical notes + treatment priority</div>
+    <div class="tcard" style="padding:1rem">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:.6rem">Phase order: 1 Gut Destroy → 2 Gut Heal → 3 Replenish → 4 Blood Sugar + Adrenals → 5 Detox (Prep Body Brain)</p>
+      <textarea style="width:100%;font-size:13px;font-family:'DM Sans',sans-serif;border:1px solid var(--border-mid);border-radius:var(--r-md);padding:10px;min-height:80px;resize:vertical;background:var(--cream);color:var(--ink)" placeholder="Pattern summary, priority flags, supplement adjustments, follow-up draw date…"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <p><strong>CuraData</strong> · Functional Blood Work Decoder · Think Like a Healer Initiative</p>
+  <p style="margin-top:4px">Built by Nasly Duarte · NLP + Computer Vision · Miami Dade College CAI2840C · <a href="https://nasly.ai" style="color:rgba(250,247,242,0.6)">nasly.ai</a></p>
+  <p style="margin-top:4px">This tool documents personal experience and is for educational purposes only. It does not constitute medical advice. Always consult a qualified healthcare provider.</p>
+</footer>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+function ss(s) {
+  s.className = 'stat-sel';
+  if (s.value === 'opt') s.classList.add('os');
+  else if (s.value === 'low') s.classList.add('ls');
+  else if (s.value === 'high') s.classList.add('hs');
+}
+function upd() {
+  const sels = document.querySelectorAll('.stat-sel');
+  let en = 0, op = 0, out = 0, fl = 0;
+  sels.forEach(s => {
+    if (s.value !== 'na') { en++; if (s.value === 'opt') op++; else { out++; fl++; } }
+  });
+  document.getElementById('s0').textContent = en;
+  document.getElementById('s1').textContent = op;
+  document.getElementById('s2').textContent = out;
+  document.getElementById('s3').textContent = fl;
+}
+function toggleR(id) {
+  const all = document.querySelectorAll('.rp');
+  all.forEach(p => { if (p.id !== 'rp-' + id) p.classList.remove('open'); });
+  const t = document.getElementById('rp-' + id);
+  if (t) t.classList.toggle('open');
+}
+function checkTemp(input) {
+  const val = parseFloat(input.value);
+  const status = input.nextElementSibling;
+  if (!val || isNaN(val)) { status.textContent = ''; return; }
+  if (val >= 98.6) { status.textContent = '✓ Optimal'; status.style.color = '#2A6B35'; }
+  else if (val >= 97.8) { status.textContent = '⚠ Monitor thyroid'; status.style.color = '#8A5C00'; }
+  else if (val >= 97.0) { status.textContent = '🚩 Iron transport impaired'; status.style.color = '#8A2A2A'; }
+  else { status.textContent = '🚩🚩 Fix thyroid first'; status.style.color = '#5A1010'; }
+}
+function checkTempStack(input) {
+  const val = parseFloat(input.value);
+  const status = document.getElementById('stackTempStatus');
+  if (!val || isNaN(val)) { status.textContent = ''; return; }
+  if (val >= 98.6) { status.textContent = '✓ Optimal'; status.style.color = '#2A6B35'; }
+  else if (val >= 97.8) { status.textContent = '⚠ Monitor thyroid'; status.style.color = '#8A5C00'; }
+  else if (val >= 97.0) { status.textContent = '🚩 Iron transport impaired'; status.style.color = '#8A2A2A'; }
+  else { status.textContent = '🚩🚩 Fix thyroid first'; status.style.color = '#5A1010'; }
+}
+function addTempRow() {
+  const grid = document.getElementById('tempGrid');
+  const div = document.createElement('div');
+  div.className = 'temp-entry';
+  div.innerHTML = '<label>Date</label><input type="date" class="temp-input" style="font-size:11px"><label style="margin-top:6px">Temp °F</label><input type="number" class="temp-input" step="0.1" placeholder="98.6" oninput="checkTemp(this)"><div class="temp-status"></div>';
+  grid.appendChild(div);
+}
+</script>
+</body>
+</html>
